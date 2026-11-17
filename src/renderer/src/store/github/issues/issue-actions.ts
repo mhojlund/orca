@@ -1,3 +1,4 @@
+import { workItemForgeIpc, workItemRpcMethod } from '@/runtime/work-item-forge/work-item-forge-api'
 import type { StateCreator } from 'zustand'
 import type { AppState } from '../../types'
 import type { GitHubSlice } from '../github-slice-contract'
@@ -55,7 +56,7 @@ export const createIssueActions = (
           requestContext.target.kind === 'environment'
             ? await callRuntimeRpc<IssueInfo | null>(
                 { kind: 'environment', environmentId: requestContext.target.environmentId },
-                'github.issue',
+                workItemRpcMethod(requestContext.provider, 'issue'),
                 {
                   repo: requestContext.target.runtimeRepoId,
                   number,
@@ -63,7 +64,7 @@ export const createIssueActions = (
                 },
                 { timeoutMs: 30_000 }
               )
-            : await window.api.gh.issue({
+            : await workItemForgeIpc(requestContext.provider).issue({
                 repoPath,
                 repoId,
                 number,

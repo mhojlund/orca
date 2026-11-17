@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import type { RuntimeClientTarget } from '../../../../shared/remote-runtime/host-catalog/runtime-client-target'
 import type { RuntimeStatus } from '../../../../shared/remote-runtime/session-graph/runtime-session-contracts'
 import type { GhAccountBinding } from '../../../../shared/github/accounts/account-binding'
@@ -22,11 +27,12 @@ export function addIssueCommentForRepo(args: {
   type?: 'issue' | 'pr'
   prRepo?: GitHubOwnerRepo | null
 }): Promise<Awaited<ReturnType<typeof window.api.gh.addIssueComment>>> {
+  const provider = workItemForgeProviderFor(args.sourceContext)
   const runtimeHost = getGitHubSourceRuntimeHost(args.sourceContext)
   if (runtimeHost) {
     return callRuntimeRpc<Awaited<ReturnType<typeof window.api.gh.addIssueComment>>>(
       { kind: 'environment', environmentId: runtimeHost.environmentId },
-      'github.addIssueComment',
+      workItemRpcMethod(provider, 'addIssueComment'),
       {
         repo: getGitHubRuntimeRepoId(args.sourceContext, args.repoId),
         number: args.number,
@@ -51,7 +57,7 @@ export function addIssueCommentForRepo(args: {
       return result
     })
   }
-  return window.api.gh.addIssueComment({
+  return workItemForgeIpc(provider).addIssueComment({
     repoPath: args.repoPath,
     repoId: args.repoId,
     sourceContext: args.sourceContext,
@@ -191,7 +197,7 @@ export function notifyWorkItemDetailsMutation(
   if (options.local !== false) {
     emitGitHubWorkItemDetailsCacheMutation(args)
   }
-  void window.api.gh
+  void workItemForgeIpc(workItemForgeProviderFor(args.sourceContext))
     .notifyWorkItemMutated({
       repoPath: args.repoPath,
       repoId: args.repoId,

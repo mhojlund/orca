@@ -1,4 +1,9 @@
 import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
+import {
   capturePRCheckContract,
   type PRCheckContract
 } from '../../source-control/checks/pr-check-observation-contract'
@@ -102,7 +107,7 @@ export async function lookupGitHubWorkItemForSource(
     target.kind === 'environment'
       ? await callRuntimeRpc<Omit<GitHubWorkItem, 'repoId'> | null>(
           target,
-          'github.workItem',
+          workItemRpcMethod(workItemForgeProviderFor(args.sourceContext), 'workItem'),
           {
             repo: runtimeRepoId(args),
             number: args.number,
@@ -113,7 +118,7 @@ export async function lookupGitHubWorkItemForSource(
             ...(args.checkContract ? contract?.rpcOptions : contract?.sourceRpcOptions)
           }
         )
-      : await window.api.gh.workItem({
+      : await workItemForgeIpc(workItemForgeProviderFor(args.sourceContext)).workItem({
           repoPath: args.repoPath,
           repoId: args.repoId,
           number: args.number,
@@ -153,7 +158,7 @@ export async function lookupGitHubWorkItemByOwnerRepoForSource(
     target.kind === 'environment'
       ? await callRuntimeRpc<Omit<GitHubWorkItem, 'repoId'> | null>(
           target,
-          'github.workItemByOwnerRepo',
+          workItemRpcMethod(workItemForgeProviderFor(args.sourceContext), 'workItemByOwnerRepo'),
           {
             repo: runtimeRepoId(args),
             owner: args.owner,
@@ -179,7 +184,7 @@ export async function lookupGitHubWorkItemByOwnerRepoForSource(
             }
           }
         )
-      : await window.api.gh.workItemByOwnerRepo({
+      : await workItemForgeIpc(workItemForgeProviderFor(args.sourceContext)).workItemByOwnerRepo({
           repoPath: args.repoPath,
           repoId: args.repoId,
           sourceContext: args.sourceContext,
@@ -246,7 +251,7 @@ export async function lookupGitHubWorkItemDetailsForSource(
       expectedGhAccount: args.expectedGhAccount,
       canonical: args.canonical ?? false,
       read: true,
-      method: 'github.workItemDetails',
+      method: workItemRpcMethod(workItemForgeProviderFor(sourceContext), 'workItemDetails'),
       params: {
         repo: getGitHubRuntimeRepoId(sourceContext, args.repoId),
         number: args.number,
@@ -264,7 +269,7 @@ export async function lookupGitHubWorkItemDetailsForSource(
         }
       },
       local: (exact) =>
-        window.api.gh.workItemDetails({
+        workItemForgeIpc(workItemForgeProviderFor(sourceContext)).workItemDetails({
           repoPath: args.repoPath,
           repoId: args.repoId,
           sourceContext,
