@@ -6,6 +6,7 @@ import { normalizeTaskProviderSettings } from '../../../../shared/work-items/tas
 import { normalizeAutoRenameBranchFromWorkDefaultOn } from '../../../../shared/source-control/ai/settings/auto-rename-branch-from-work-settings'
 import { normalizePluginSystemEnabledDefaultOn } from '../../../../shared/plugins/plugin-system-settings'
 import { migrateNestedWorkerMaxDepthDefault } from '../../../../shared/orchestration/workers/nested-worker-depth'
+import { addNewlyDefaultedTaskProviders } from './task-provider-visibility-migration'
 import {
   addMobilePairingCustomAddress,
   normalizeMobilePairingCustomAddress,
@@ -124,15 +125,12 @@ export function prepareLoadedProfileSettings(
     visibleTaskProviders: parsed.settings?.visibleTaskProviders,
     defaultTaskSource: parsed.settings?.defaultTaskSource
   })
-  const visibleTaskProvidersDefaultedForJira =
-    parsed.settings?.visibleTaskProvidersDefaultedForJira === true
-  const migratedVisibleTaskProviders = visibleTaskProvidersDefaultedForJira
-    ? rawTaskProviderSettings.visibleTaskProviders
-    : rawTaskProviderSettings.visibleTaskProviders.includes('jira')
-      ? rawTaskProviderSettings.visibleTaskProviders
-      : [...rawTaskProviderSettings.visibleTaskProviders, 'jira' as const]
+  const providerMigration = addNewlyDefaultedTaskProviders(
+    rawTaskProviderSettings.visibleTaskProviders,
+    parsed.settings
+  )
   const taskProviderSettings = normalizeTaskProviderSettings({
-    visibleTaskProviders: migratedVisibleTaskProviders,
+    visibleTaskProviders: providerMigration.providers,
     defaultTaskSource: rawTaskProviderSettings.defaultTaskSource
   })
   const primarySelectionDefaultedForLinux =
@@ -151,7 +149,7 @@ export function prepareLoadedProfileSettings(
   if (migratePrimarySelectionPlatformDefault || stampPrimarySelectionTerminalDefaults) {
     markNeedsSave()
   }
-  if (!visibleTaskProvidersDefaultedForJira) {
+  if (providerMigration.needsSave) {
     markNeedsSave()
   }
   const claudeAgentTeamsDefaultDisabledMigrated =

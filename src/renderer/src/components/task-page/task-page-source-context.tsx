@@ -58,6 +58,16 @@ export const GITHUB_TASK_HEADER_SURFACE_CLASS =
 export function getGitHubWorkItemWorkspaceSeed(item: GitHubWorkItem): string {
   return getLinkedWorkItemWorkspaceName(item)?.seedName ?? getLinkedWorkItemSuggestedName(item)
 }
+export function getGiteaWorkItemWorkspaceSeed(item: GitHubWorkItem): string {
+  return (
+    getLinkedWorkItemWorkspaceName({
+      type: 'issue',
+      provider: 'gitea',
+      number: item.number,
+      title: item.title
+    })?.seedName ?? getLinkedWorkItemSuggestedName(item)
+  )
+}
 export function getGitLabWorkItemWorkspaceSeed(item: GitLabWorkItem): string {
   return (
     getLinkedWorkItemWorkspaceName({

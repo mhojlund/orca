@@ -30,12 +30,20 @@ export type WorkItemForgeCapabilities = {
 }
 
 const FORGE_PROVIDER_BY_TASK_PROVIDER: Partial<Record<TaskProvider, WorkItemForgeProvider>> = {
-  github: 'github'
+  github: 'github',
+  gitea: 'gitea'
 }
 
 const CAPABILITIES: Record<WorkItemForgeProvider, WorkItemForgeCapabilities> = {
   github: { closeReasons: true, projects: true, accountBinding: true, rateLimitBudget: true },
   gitea: { closeReasons: false, projects: false, accountBinding: false, rateLimitBudget: false }
+}
+
+/** True when the source's work items come through the GitHub-shaped forge contract. */
+export function isWorkItemForgeSource(
+  sourceContext: { provider: TaskProvider } | null | undefined
+): boolean {
+  return sourceContext?.provider === 'github' || sourceContext?.provider === 'gitea'
 }
 
 /** Which forge serves a task source's work items; unmapped sources fall back to GitHub's contract. */
