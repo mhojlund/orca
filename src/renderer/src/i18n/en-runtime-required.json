@@ -1768,6 +1768,15 @@
       "unreachable": "Could not reach Bitbucket. Check your connection or the API base URL, then try again."
     },
     "errors": {
+      "gitea": {
+        "authRequired": "Connect this Gitea/Forgejo instance in Settings > Integrations to see private repositories and use @me filters.",
+        "closeReasonUnsupported": "Gitea/Forgejo can only close issues as completed.",
+        "notFound": "Not found on Gitea/Forgejo. It may have been deleted, or issues are disabled.",
+        "permissionDenied": "You don't have permission to do this. Check your Gitea/Forgejo token scopes.",
+        "repoUnresolved": "Could not resolve the Gitea/Forgejo repository for this checkout",
+        "requestFailed": "Gitea/Forgejo request failed: {{detail}}",
+        "unsupportedQualifier": "Gitea/Forgejo ignored these filters: {{detail}}"
+      },
       "github": {
         "autoMergeAlreadyMergeable": "This pull request can already be merged. Use Merge instead of auto-merge.",
         "autoMergeDisableFailed": "Failed to disable auto-merge for pull request: {{detail}}",
@@ -1812,6 +1821,14 @@
       "issueUpdateFailed": "Failed to update issue: {{detail}}",
       "networkError": "Network error — check your connection.",
       "titleRequired": "Title is required"
+    },
+    "giteaConnect": {
+      "invalidInput": "Invalid Gitea/Forgejo credentials",
+      "invalidUrl": "Enter a valid http(s) instance URL.",
+      "notGitea": "This URL does not look like a Gitea or Forgejo instance.",
+      "rejected": "The instance rejected this token. Check the token and its scopes, then try again.",
+      "tokenRequired": "Enter a personal access token.",
+      "unreachable": "Could not reach the instance. Check your connection and the URL, then try again."
     },
     "startPoint": {
       "fetchFailed": "Failed to fetch {{ref}}: {{detail}}",

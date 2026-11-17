@@ -82,12 +82,11 @@ export function GiteaIntegrationCard(): React.JSX.Element {
             )
         )
       }
-    } finally {
-      if (mountedRef.current) {
-        setRemovingId(null)
-      }
-      reloadCardState()
     }
+    if (mountedRef.current) {
+      setRemovingId(null)
+    }
+    reloadCardState()
   }
 
   return (

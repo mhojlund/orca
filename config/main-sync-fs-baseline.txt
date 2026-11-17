@@ -257,6 +257,7 @@
 13 src/main/git/repositories/discovery/repo-git-marker-scan.ts
 1 src/main/git/source-control/ignores/huge-folder-ignore.ts
 3 src/main/git/worktrees/catalog/worktree-git-path.ts
+6 src/main/gitea/instances/gitea-instance-store.ts
 1 src/main/github/client/check/check-job-log-cache-retention-child.mjs
 6 src/main/google/google-credential-store.ts
 1 src/main/google/google-pdf-text-client.ts

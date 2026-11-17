@@ -1,4 +1,4 @@
-import { useEffectEvent, useId, useLayoutEffect, useRef, useState } from 'react'
+import { useEffectEvent, useId, useLayoutEffect, useState } from 'react'
 import { ExternalLink, Eye, EyeOff, LoaderCircle, Lock } from 'lucide-react'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { Button } from '@/components/ui/button'
@@ -62,12 +62,12 @@ export function GiteaInstanceDialog({
   const [showToken, setShowToken] = useState(false)
   const [connectState, setConnectState] = useState<ConnectState>('idle')
   const [connectError, setConnectError] = useState<string | null>(null)
-  const baselineUrlRef = useRef('')
+  const [baselineUrl, setBaselineUrl] = useState('')
 
   // Keyed on `open` only, so a status refresh mid-edit cannot overwrite typing.
   const seed = useEffectEvent(() => {
     const seedUrl = initialBaseUrl ?? ''
-    baselineUrlRef.current = seedUrl
+    setBaselineUrl(seedUrl)
     setBaseUrl(seedUrl)
     setToken('')
     setConnectState('idle')
@@ -91,7 +91,7 @@ export function GiteaInstanceDialog({
   }
 
   const guardOutsideDismiss = preventOutsideDismissWhenDirty(
-    () => token !== '' || baseUrl !== baselineUrlRef.current
+    () => token !== '' || baseUrl !== baselineUrl
   )
 
   const handleConnect = async (): Promise<void> => {
@@ -162,7 +162,10 @@ export function GiteaInstanceDialog({
             <Input
               id={baseUrlId}
               autoFocus={!lockBaseUrl}
-              placeholder="https://codeberg.org"
+              placeholder={t(
+                'auto.components.settings.gitea.instance.dialog.baseUrlPlaceholder',
+                'https://codeberg.org'
+              )}
               value={baseUrl}
               readOnly={lockBaseUrl}
               onChange={(event) => {
