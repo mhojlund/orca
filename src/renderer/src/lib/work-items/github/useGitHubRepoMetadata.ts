@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import { getTaskSourceCacheScope } from '../../../../../shared/work-items/task-source-context'
 import { getGitHubRuntimeRepoId } from '@/lib/work-items/github/github-source-runtime-context'
 import { callGitHubTargetOperation } from '@/lib/work-items/github/github-work-item-target-request'
@@ -57,11 +62,11 @@ export function useRepoLabels(
         target,
         ownerRepo,
         expectedGhAccount: owner.expectedGhAccount,
-        method: 'github.listLabels',
+        method: workItemRpcMethod(workItemForgeProviderFor(bound?.sourceContext), 'listLabels'),
         params: { repo: repoSelector },
         timeoutMs: 15_000,
         local: (exact) =>
-          window.api.gh.listLabels({
+          workItemForgeIpc(workItemForgeProviderFor(bound?.sourceContext)).listLabels({
             repoPath: repoPath ?? '',
             repoId: repoId ?? undefined,
             ...(bound?.sourceContext ? { sourceContext: bound.sourceContext } : {}),
@@ -116,11 +121,14 @@ export function useRepoAssignees(
         target,
         ownerRepo,
         expectedGhAccount: owner.expectedGhAccount,
-        method: 'github.listAssignableUsers',
+        method: workItemRpcMethod(
+          workItemForgeProviderFor(bound?.sourceContext),
+          'listAssignableUsers'
+        ),
         params: { repo: repoSelector },
         timeoutMs: 15_000,
         local: (exact) =>
-          window.api.gh.listAssignableUsers({
+          workItemForgeIpc(workItemForgeProviderFor(bound?.sourceContext)).listAssignableUsers({
             repoPath: repoPath ?? '',
             repoId: repoId ?? undefined,
             ...(bound?.sourceContext ? { sourceContext: bound.sourceContext } : {}),

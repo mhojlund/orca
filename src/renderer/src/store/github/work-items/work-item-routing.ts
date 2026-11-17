@@ -26,9 +26,16 @@ import {
 } from '@/runtime/rpc/targets/runtime-client-target'
 import type { RuntimeClientTarget } from '../../../../../shared/remote-runtime/host-catalog/runtime-client-target'
 import { workItemsCacheKey } from '../cache/cache-identity'
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod,
+  type WorkItemForgeProvider
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import { findRepoForGitHubOwner, getRuntimeRepoTarget } from '../repositories/repository-routing'
 
 export type GitHubWorkItemRequestContext = {
+  provider: WorkItemForgeProvider
   repoId: string
   repoPath: string
   target: GitHubWorkItemRequestTarget
@@ -193,6 +200,7 @@ export function getGitHubWorkItemRequestContext(
     const parsedHost = parseExecutionHostId(sourceContext.hostId)
     if (parsedHost?.kind === 'runtime') {
       return {
+        provider: workItemForgeProviderFor(sourceContext),
         repoId,
         repoPath,
         target: {
@@ -205,6 +213,7 @@ export function getGitHubWorkItemRequestContext(
   }
   const runtimeRepo = getRuntimeRepoTarget(state, { repoId, repoPath }, requestTarget)
   return {
+    provider: workItemForgeProviderFor(sourceContext),
     repoId,
     repoPath,
     target: runtimeRepo
@@ -225,7 +234,7 @@ export function listGitHubWorkItemsForRepo(
     const { wakeWslDistro: _wake, ...remoteArgs } = args
     return callRuntimeRpc<ListWorkItemsResult<Omit<GitHubWorkItem, 'repoId'>>>(
       { kind: 'environment', environmentId: context.target.environmentId },
-      'github.listWorkItems',
+      workItemRpcMethod(context.provider, 'listWorkItems'),
       {
         repo: context.target.runtimeRepoId,
         ...remoteArgs
@@ -233,7 +242,7 @@ export function listGitHubWorkItemsForRepo(
       { timeoutMs: 30_000 }
     )
   }
-  return window.api.gh.listWorkItems({
+  return workItemForgeIpc(context.provider).listWorkItems({
     repoPath: context.repoPath,
     repoId: context.repoId,
     ...args
@@ -248,7 +257,7 @@ export function countGitHubWorkItemsForRepo(
     const { wakeWslDistro: _wake, ...remoteArgs } = args
     return callRuntimeRpc<number>(
       { kind: 'environment', environmentId: context.target.environmentId },
-      'github.countWorkItems',
+      workItemRpcMethod(context.provider, 'countWorkItems'),
       {
         repo: context.target.runtimeRepoId,
         ...remoteArgs
@@ -256,7 +265,7 @@ export function countGitHubWorkItemsForRepo(
       { timeoutMs: 30_000 }
     )
   }
-  return window.api.gh.countWorkItems({
+  return workItemForgeIpc(context.provider).countWorkItems({
     repoPath: context.repoPath,
     repoId: context.repoId,
     ...args

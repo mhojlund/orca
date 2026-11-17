@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import type { GitHubWorkItem } from '../../../../../../shared/github/work-items/work-item-types'
 import type { GitHubIssueUpdate } from '../../../../../../shared/work-items/issue-mutation-types'
 import type { Repo } from '../../../../../../shared/repository/repo-types'
@@ -162,7 +167,7 @@ export function GHStatusCell({
                   error?: string
                 }>(
                   target,
-                  'github.updateIssue',
+                  workItemRpcMethod(workItemForgeProviderFor(sourceContext), 'updateIssue'),
                   {
                     repo: runtimeRepoId,
                     number: item.number,
@@ -172,7 +177,7 @@ export function GHStatusCell({
                     timeoutMs: 30_000
                   }
                 )
-              : window.api.gh.updateIssue({
+              : workItemForgeIpc(workItemForgeProviderFor(sourceContext)).updateIssue({
                   repoPath: repo.path,
                   repoId: repo.id,
                   sourceContext,
