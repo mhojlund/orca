@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import { getGitHubMutationTarget } from './github-work-item-mutation-target'
 export { getGitHubMutationTarget } from './github-work-item-mutation-target'
 import { callGitHubTargetOperation } from '@/lib/work-items/github/github-work-item-target-request'
@@ -66,6 +71,7 @@ export async function runIssueUpdate(args: {
   if (!args.issueRepo) {
     throw new Error('Unable to identify this GitHub item. Open it again from Tasks.')
   }
+  const provider = workItemForgeProviderFor(args.sourceContext)
   const runtimeHost = getGitHubSourceRuntimeHost(args.sourceContext)
   if (!args.repoPath && !runtimeHost) {
     throw new Error('No repo context available for this edit.')
@@ -75,14 +81,14 @@ export async function runIssueUpdate(args: {
       ? { kind: 'environment', environmentId: runtimeHost.environmentId }
       : { kind: 'local' },
     ownerRepo: args.issueRepo,
-    method: 'github.updateIssue',
+    method: workItemRpcMethod(provider, 'updateIssue'),
     params: {
       repo: getGitHubRuntimeRepoId(args.sourceContext, args.repoId ?? ''),
       number: args.number,
       updates: args.updates
     },
     local: (exact) =>
-      window.api.gh.updateIssue({
+      workItemForgeIpc(provider).updateIssue({
         repoPath: args.repoPath ?? '',
         repoId: args.repoId ?? undefined,
         sourceContext: args.sourceContext,
