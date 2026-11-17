@@ -166,7 +166,7 @@ export async function registerCoreHandlers(
     registerLinearHandlers()
     registerJiraHandlers()
     registerJiraIssueSummaryGenerationHandlers(store, commitMessageAgentEnv)
-    registerTokenForgeHandlers()
+    registerTokenForgeHandlers(store)
     registerFeedbackHandlers()
     if (crashReports) {
       registerCrashReportingHandlers(crashReports)

@@ -18,11 +18,14 @@ async function readResponseText(response: Response): Promise<string> {
   }
 }
 
-export async function requestHostedReviewJson<T>(
+export type HostedReviewApiResponse<T> = { data: T | null; headers: Headers }
+
+/** Like requestHostedReviewJson, but keeps headers (pagination totals) and allows empty 204 bodies. */
+export async function requestHostedReviewResponse<T>(
   url: URL,
   init: Omit<RequestInit, 'signal'>,
   timeoutMs: number
-): Promise<T> {
+): Promise<HostedReviewApiResponse<T>> {
   try {
     const response = await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) })
     if (!response.ok) {
@@ -31,7 +34,9 @@ export async function requestHostedReviewJson<T>(
         status: response.status
       })
     }
-    return (await response.json()) as T
+    const text = await readResponseText(response)
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: callers name the provider's documented response shape; this layer only transports it.
+    return { data: text ? (JSON.parse(text) as T) : null, headers: response.headers }
   } catch (error) {
     if (error instanceof HostedReviewApiRequestError) {
       throw error
@@ -42,4 +47,13 @@ export async function requestHostedReviewJson<T>(
     }
     throw error
   }
+}
+
+export async function requestHostedReviewJson<T>(
+  url: URL,
+  init: Omit<RequestInit, 'signal'>,
+  timeoutMs: number
+): Promise<T> {
+  // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: preserves this helper's prior contract, where callers expect a JSON body.
+  return (await requestHostedReviewResponse<T>(url, init, timeoutMs)).data as T
 }

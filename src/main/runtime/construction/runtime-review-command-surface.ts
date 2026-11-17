@@ -4,9 +4,11 @@ import type { RuntimeGitHubReviewMutationCommands } from '../integrations/github
 import type { RuntimeGitHubReviewQueryCommands } from '../integrations/github/runtime-github-review-query-commands'
 import type { RuntimeGitLabMutationCommands } from '../integrations/gitlab/runtime-gitlab-mutation-commands'
 import type { RuntimeGitLabQueryCommands } from '../integrations/gitlab/runtime-gitlab-query-commands'
+import type { RuntimeGiteaWorkItemCommands } from '../integrations/gitea/runtime-gitea-work-item-commands'
 
 type GitLabQueryName = Exclude<keyof RuntimeGitLabQueryCommands, 'constructor'>
 type GitLabMutationName = Exclude<keyof RuntimeGitLabMutationCommands, 'constructor'>
+type GiteaWorkItemName = Exclude<keyof RuntimeGiteaWorkItemCommands, 'constructor'>
 type GitHubProjectName = Exclude<keyof RuntimeGitHubProjectCommands, 'constructor'>
 type GitHubReviewQueryName =
   | 'getRepoIssue'
@@ -41,15 +43,17 @@ export type RuntimeReviewCommandSurface = {} & Pick<RuntimeGitLabQueryCommands, 
   Pick<RuntimeGitHubReviewQueryCommands, GitHubReviewQueryName> &
   Pick<RuntimeGitHubReviewMutationCommands, GitHubReviewMutationName> &
   Pick<RuntimeGitHubIssueCommentCommands, GitHubIssueCommentName> &
-  Pick<RuntimeGitHubProjectCommands, GitHubProjectName>
+  Pick<RuntimeGitHubProjectCommands, GitHubProjectName> &
+  Pick<RuntimeGiteaWorkItemCommands, GiteaWorkItemName>
 
-type RuntimeReviewCommandOwners = {
+export type RuntimeReviewCommandOwners = {
   gitLabQueries: RuntimeGitLabQueryCommands
   gitLabMutations: RuntimeGitLabMutationCommands
   gitHubReviewQueries: RuntimeGitHubReviewQueryCommands
   gitHubReviewMutations: RuntimeGitHubReviewMutationCommands
   gitHubIssueComments: RuntimeGitHubIssueCommentCommands
   gitHubProjects: RuntimeGitHubProjectCommands
+  giteaWorkItems: RuntimeGiteaWorkItemCommands
 }
 
 export function installRuntimeReviewCommandSurface(
@@ -62,6 +66,7 @@ export function installRuntimeReviewCommandSurface(
   const ghm = owners.gitHubReviewMutations
   const comments = owners.gitHubIssueComments
   const projects = owners.gitHubProjects
+  const gitea = owners.giteaWorkItems
   Object.assign(target, {
     listGitLabRepoWorkItems: glq.listGitLabRepoWorkItems.bind(glq),
     listGitLabRepoMRs: glq.listGitLabRepoMRs.bind(glq),
@@ -125,6 +130,17 @@ export function installRuntimeReviewCommandSurface(
     updateGitHubIssueTypeBySlug: projects.updateGitHubIssueTypeBySlug.bind(projects),
     addGitHubIssueCommentBySlug: projects.addGitHubIssueCommentBySlug.bind(projects),
     updateGitHubIssueCommentBySlug: projects.updateGitHubIssueCommentBySlug.bind(projects),
-    deleteGitHubIssueCommentBySlug: projects.deleteGitHubIssueCommentBySlug.bind(projects)
+    deleteGitHubIssueCommentBySlug: projects.deleteGitHubIssueCommentBySlug.bind(projects),
+    listGiteaRepoWorkItems: gitea.listGiteaRepoWorkItems.bind(gitea),
+    countGiteaRepoWorkItems: gitea.countGiteaRepoWorkItems.bind(gitea),
+    getGiteaRepoIssue: gitea.getGiteaRepoIssue.bind(gitea),
+    getGiteaRepoWorkItem: gitea.getGiteaRepoWorkItem.bind(gitea),
+    getGiteaRepoWorkItemByOwnerRepo: gitea.getGiteaRepoWorkItemByOwnerRepo.bind(gitea),
+    getGiteaRepoWorkItemDetails: gitea.getGiteaRepoWorkItemDetails.bind(gitea),
+    createGiteaRepoIssue: gitea.createGiteaRepoIssue.bind(gitea),
+    updateGiteaRepoIssue: gitea.updateGiteaRepoIssue.bind(gitea),
+    addGiteaRepoIssueComment: gitea.addGiteaRepoIssueComment.bind(gitea),
+    listGiteaRepoLabels: gitea.listGiteaRepoLabels.bind(gitea),
+    listGiteaRepoAssignableUsers: gitea.listGiteaRepoAssignableUsers.bind(gitea)
   })
 }
