@@ -9,6 +9,7 @@ import { RuntimeGitHubReviewQueryCommands } from '../integrations/github/runtime
 import { RuntimeGitHubReviewMutationCommands } from '../integrations/github/runtime-github-review-mutation-commands'
 import { RuntimeGitHubIssueCommentCommands } from '../integrations/github/runtime-github-issue-comment-commands'
 import { RuntimeGitHubProjectCommands } from '../integrations/github/runtime-github-project-commands'
+import { RuntimeGiteaWorkItemCommands } from '../integrations/gitea/runtime-gitea-work-item-commands'
 import { RuntimeRepositoryHooksCommands } from '../repositories/runtime-repository-hooks-commands'
 import { RuntimeRepositoryIssueCommand } from '../repositories/runtime-repository-issue-command'
 import { ClientHostedBrowserRowPublisher } from '../browser/client-pages/client-hosted-browser-row-publication'
@@ -23,6 +24,7 @@ import {
 import { OrcaRuntimeWithFileCommands } from './runtime-file-command-state'
 import { readCreateSourceSetupHooks } from '../../workspace-hooks/create-source-setup-hooks'
 import { getWorktreeCreatePrefetchGitOptions } from '../../workspaces/execution-host/project-runtime-git-options'
+import type { RuntimeReviewCommandOwners } from './runtime-review-command-surface'
 
 export abstract class OrcaRuntimeWithRepositoryCommands extends OrcaRuntimeWithFileCommands {
   protected readonly gitCommands = new RuntimeGitCommands({
@@ -157,6 +159,11 @@ export abstract class OrcaRuntimeWithRepositoryCommands extends OrcaRuntimeWithF
 
   protected readonly gitHubProjectCommands = new RuntimeGitHubProjectCommands()
 
+  protected readonly giteaWorkItemCommands = new RuntimeGiteaWorkItemCommands({
+    resolveRepo: (selector) => this.resolveRepoSelector(selector),
+    getLocalGitArgs: (repo) => this.getLocalGitExecutionOptionArgs(repo)
+  })
+
   protected readonly repositoryHooks = new RuntimeRepositoryHooksCommands({
     resolveRepo: (selector) => this.resolveRepoSelector(selector),
     readCreateSourceHooks: (repo, source) =>
@@ -187,4 +194,17 @@ export abstract class OrcaRuntimeWithRepositoryCommands extends OrcaRuntimeWithF
   })
 
   protected readonly persistedClientHostedBrowserWorktreeIds = new Set<string>()
+
+  /** Owners whose commands the review RPC surface binds onto the runtime. */
+  protected reviewCommandOwners(): RuntimeReviewCommandOwners {
+    return {
+      gitLabQueries: this.gitLabQueryCommands,
+      gitLabMutations: this.gitLabMutationCommands,
+      gitHubReviewQueries: this.gitHubReviewQueries,
+      gitHubReviewMutations: this.gitHubReviewMutations,
+      gitHubIssueComments: this.gitHubIssueComments,
+      gitHubProjects: this.gitHubProjectCommands,
+      giteaWorkItems: this.giteaWorkItemCommands
+    }
+  }
 }
