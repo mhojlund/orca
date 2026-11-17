@@ -96,7 +96,7 @@ export function reviewCopy(provider: HostedReviewProvider): {
       shortLabel: 'PR',
       reviewLabel: 'pull request',
       providerName: 'Gitea',
-      authInstruction: 'Set ORCA_GITEA_TOKEN'
+      authInstruction: 'Connect Gitea/Forgejo in Settings > Integrations, or set ORCA_GITEA_TOKEN'
     }
   }
   if (provider === 'bitbucket') {
@@ -125,7 +125,11 @@ export async function isProviderAuthenticated(
     return isAzureDevOpsReviewCreationAuthenticated()
   }
   if (provider === 'gitea') {
-    return isGiteaReviewCreationAuthenticated()
+    return isGiteaReviewCreationAuthenticated(
+      repoPath,
+      hostedReviewSshConnectionId(executionHostId),
+      options
+    )
   }
   if (provider === 'bitbucket') {
     // Bitbucket authentication must not fall through to GitHub login requirements.

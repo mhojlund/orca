@@ -14,17 +14,18 @@ import {
   type HostedReviewExecutionOptions
 } from '../source-control/hosted-review-git-options'
 import { cancelUnreadResponseBody } from '../lib/unread-response-body'
+import { normalizeGiteaApiBaseUrl } from './gitea-api-base-url'
+import { getGiteaEnvConfig } from './instances/gitea-env-config'
+import { resolveGiteaRequestAuth, type GiteaRequestAuth } from './instances/gitea-auth-resolution'
+import { listStoredGiteaInstances } from './instances/gitea-instance-store'
+
+export { normalizeGiteaApiBaseUrl }
 
 const REQUEST_TIMEOUT_MS = 5000
 // Forgejo may spend several seconds loading reviewers for one pulls page.
 const PULL_REQUEST_LIST_TIMEOUT_MS = 15_000
 const PULL_REQUEST_PAGE_LIMIT = 50
 const MAX_PULL_REQUEST_PAGES = 5
-
-type GiteaAuthConfig = {
-  apiBaseUrl: string | null
-  token: string | null
-}
 
 export type GiteaAuthStatus = {
   configured: boolean
@@ -41,30 +42,12 @@ type RequestOptions = {
   allowNotFound?: boolean
 }
 
-function envValue(name: string): string | null {
-  const value = process.env[name]?.trim() ?? ''
-  return value.length > 0 ? value : null
+function authHeaders(auth: Pick<GiteaRequestAuth, 'token'>): Record<string, string> {
+  return auth.token ? { Authorization: `token ${auth.token}` } : {}
 }
 
-export function normalizeGiteaApiBaseUrl(value: string): string {
-  const trimmed = value.trim().replace(/\/+$/, '')
-  return /\/api\/v1$/i.test(trimmed) ? trimmed : `${trimmed}/api/v1`
-}
-
-function getAuthConfig(): GiteaAuthConfig {
-  const apiBaseUrl = envValue('ORCA_GITEA_API_BASE_URL')
-  return {
-    apiBaseUrl: apiBaseUrl ? normalizeGiteaApiBaseUrl(apiBaseUrl) : null,
-    token: envValue('ORCA_GITEA_TOKEN')
-  }
-}
-
-function authHeaders(config: Pick<GiteaAuthConfig, 'token'>): Record<string, string> {
-  return config.token ? { Authorization: `token ${config.token}` } : {}
-}
-
-function configuredApiBaseUrl(repo: GiteaRepoRef): string {
-  return getAuthConfig().apiBaseUrl ?? repo.apiBaseUrl
+function configuredAuth(repo: GiteaRepoRef): GiteaRequestAuth {
+  return resolveGiteaRequestAuth(repo)
 }
 
 function apiUrl(baseUrl: string, path: string, searchParams?: RequestOptions['searchParams']): URL {
@@ -78,18 +61,17 @@ function apiUrl(baseUrl: string, path: string, searchParams?: RequestOptions['se
 }
 
 async function requestJsonAtBase<T>(
-  baseUrl: string,
+  auth: GiteaRequestAuth,
   path: string,
   options: RequestOptions = {},
   // Creation needs transport/auth failures distinguished from confirmed absence.
   throwOnFailure = false
 ): Promise<T | null> {
-  const config = getAuthConfig()
   try {
-    const response = await fetch(apiUrl(baseUrl, path, options.searchParams), {
+    const response = await fetch(apiUrl(auth.apiBaseUrl, path, options.searchParams), {
       headers: {
         Accept: 'application/json',
-        ...authHeaders(config)
+        ...authHeaders(auth)
       },
       signal: AbortSignal.timeout(options.timeoutMs ?? REQUEST_TIMEOUT_MS)
     })
@@ -116,7 +98,7 @@ function requestJson<T>(
   options: RequestOptions = {},
   throwOnFailure = false
 ): Promise<T | null> {
-  return requestJsonAtBase(configuredApiBaseUrl(repo), path, options, throwOnFailure)
+  return requestJsonAtBase(configuredAuth(repo), path, options, throwOnFailure)
 }
 
 function encodedRepoPath(repo: GiteaRepoRef): string {
@@ -124,7 +106,7 @@ function encodedRepoPath(repo: GiteaRepoRef): string {
 }
 
 function giteaPullRequestScanKey(repo: GiteaRepoRef): string {
-  return `${configuredApiBaseUrl(repo)}/${encodedRepoPath(repo)}`
+  return `${configuredAuth(repo).apiBaseUrl}/${encodedRepoPath(repo)}`
 }
 
 /** Invalidate after creation so card refreshes cannot reuse a cached miss. */
@@ -166,8 +148,19 @@ function matchesBranch(raw: RawGiteaPullRequest, branchName: string): boolean {
 }
 
 export async function getGiteaAuthStatus(): Promise<GiteaAuthStatus> {
-  const config = getAuthConfig()
+  const config = getGiteaEnvConfig()
   const tokenConfigured = config.token !== null
+  // Stored instances were verified at connect time; status must not decrypt (keychain prompt).
+  const stored = listStoredGiteaInstances()
+  if (stored.length > 0 && !tokenConfigured) {
+    return {
+      configured: true,
+      authenticated: true,
+      account: stored.length === 1 ? stored[0].account : null,
+      baseUrl: stored.length === 1 ? stored[0].webBaseUrl : null,
+      tokenConfigured: true
+    }
+  }
   if (!config.apiBaseUrl && !tokenConfigured) {
     return {
       configured: false,
@@ -188,9 +181,11 @@ export async function getGiteaAuthStatus(): Promise<GiteaAuthStatus> {
   }
 
   if (!tokenConfigured) {
-    const version = await requestJsonAtBase<{ version?: string }>(config.apiBaseUrl, '/version', {
-      timeoutMs: 4000
-    })
+    const version = await requestJsonAtBase<{ version?: string }>(
+      { apiBaseUrl: config.apiBaseUrl, token: null },
+      '/version',
+      { timeoutMs: 4000 }
+    )
     return {
       configured: version !== null,
       authenticated: false,
@@ -204,7 +199,7 @@ export async function getGiteaAuthStatus(): Promise<GiteaAuthStatus> {
     login?: string | null
     username?: string | null
     full_name?: string | null
-  }>(config.apiBaseUrl, '/user', { timeoutMs: 4000 })
+  }>({ apiBaseUrl: config.apiBaseUrl, token: config.token }, '/user', { timeoutMs: 4000 })
   return {
     configured: true,
     authenticated: user !== null,

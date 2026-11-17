@@ -19,7 +19,7 @@ import { registerHostedReviewHandlers } from '../source-control/hosted-review'
 import { registerLinearHandlers } from '../linear/register-handlers'
 import { registerJiraHandlers } from '../jira/register-handlers'
 import { registerJiraIssueSummaryGenerationHandlers } from '../jira/issue-summary-generation'
-import { registerBitbucketHandlers } from '../source-control/bitbucket'
+import { registerTokenForgeHandlers } from '../source-control/token-forge-handlers'
 import { registerFeedbackHandlers } from '../feedback/feedback'
 import { registerCrashReportingHandlers } from '../crash-reporting/crash-reporting'
 import { registerExportHandlers } from '../export'
@@ -161,7 +161,7 @@ export async function registerCoreHandlers(
     registerLinearHandlers()
     registerJiraHandlers()
     registerJiraIssueSummaryGenerationHandlers(store, commitMessageAgentEnv)
-    registerBitbucketHandlers()
+    registerTokenForgeHandlers()
     registerFeedbackHandlers()
     if (crashReports) {
       registerCrashReportingHandlers(crashReports)
