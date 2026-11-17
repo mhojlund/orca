@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Github, Gitlab } from 'lucide-react'
+import { GitBranch, Github, Gitlab } from 'lucide-react'
 import type { GlobalSettings } from '../../../../../shared/settings/global-settings-types'
 
 import {
@@ -68,6 +68,18 @@ const PROVIDER_META: Record<
       )
     },
     Icon: ({ className }) => <Gitlab className={className} />
+  },
+  gitea: {
+    get label() {
+      return translate('auto.components.settings.TasksPane.giteaLabel', 'Gitea')
+    },
+    get description() {
+      return translate(
+        'auto.components.settings.TasksPane.giteaDescription',
+        'Browse Gitea and Forgejo issues and start workspaces from them.'
+      )
+    },
+    Icon: ({ className }) => <GitBranch className={className} />
   },
   linear: {
     get label() {
