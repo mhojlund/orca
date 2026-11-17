@@ -4275,7 +4275,22 @@
           "linearViewNotFound": "Saved Linear view was not found.",
           "linearViewRestoreFailed": "Failed to restore saved Linear view."
         },
-        "shownCount_one": "{{count}} shown"
+        "shownCount_one": "{{count}} shown",
+        "backToGiteaList": "Gitea list",
+        "giteaStateOpen": "Open",
+        "giteaStateClosed": "Closed",
+        "giteaStateAll": "All",
+        "giteaInvolvementEveryone": "Everyone",
+        "giteaInvolvementAssigned": "Assigned to me",
+        "giteaInvolvementCreated": "Created by me",
+        "giteaRefresh": "Refresh Gitea issues",
+        "giteaState": "State",
+        "giteaConnect": "Connect Gitea/Forgejo",
+        "giteaEmptyTitle": "No Gitea issues",
+        "giteaEmptyDescription": "No Gitea or Forgejo issues match this filter.",
+        "giteaOpenInBrowser": "Open in Gitea",
+        "giteaLoadFailed": "Could not load Gitea issues. Refresh to try again.",
+        "giteaSourceLabel": "Gitea"
       },
       "Terminal": {
         "73768427cf": "Close",
@@ -10445,7 +10460,9 @@
           "integrationsLink": "Integrations",
           "skillHint": ". After Linear is connected, usage examples stay under Settings → Linear.",
           "incompleteBannerBodyWithLinear": "Hide providers you do not use, or expand a card and finish its steps. For Linear: API access, the agent skill, and Show in Tasks.",
-          "30255b39dc": "Task providers"
+          "30255b39dc": "Task providers",
+          "giteaLabel": "Gitea",
+          "giteaDescription": "Browse Gitea and Forgejo issues and start workspaces from them."
         },
         "TerminalAppearanceSection": {
           "a14a427ae4": "Thickness of the pane divider line.",

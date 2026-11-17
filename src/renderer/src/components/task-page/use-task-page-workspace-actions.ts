@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { translate } from '@/i18n/i18n'
 import {
   getGitHubWorkItemWorkspaceSeed,
+  getGiteaWorkItemWorkspaceSeed,
   getGitLabWorkItemWorkspaceSeed
 } from './task-page-source-context'
 import { getTaskPageRepoSourceContext } from '../../lib/work-items/task-repo-source-context'
@@ -122,19 +123,34 @@ export function useTaskPageWorkspaceActions<Model extends TaskPageWorkspaceActio
     },
     [openComposerForGitLabItem]
   )
-  const nextModel = model as typeof model & {
-    openComposerForItem: typeof openComposerForItem
-    handleUseWorkItem: typeof handleUseWorkItem
-    handleOpenOrUseGitHubWorkItem: typeof handleOpenOrUseGitHubWorkItem
-    openComposerForGitLabItem: typeof openComposerForGitLabItem
-    handleUseGitLabItem: typeof handleUseGitLabItem
-  }
-  nextModel.openComposerForItem = openComposerForItem
-  nextModel.handleUseWorkItem = handleUseWorkItem
-  nextModel.handleOpenOrUseGitHubWorkItem = handleOpenOrUseGitHubWorkItem
-  nextModel.openComposerForGitLabItem = openComposerForGitLabItem
-  nextModel.handleUseGitLabItem = handleUseGitLabItem
-  return nextModel
+  const handleUseGiteaItem = useCallback(
+    (item: GitHubWorkItem): void => {
+      useAppStore.getState().recordFeatureInteraction('gitea-tasks')
+      openModal('new-workspace-composer', {
+        linkedWorkItem: {
+          provider: 'gitea',
+          type: 'issue',
+          number: item.number,
+          title: item.title,
+          url: item.url,
+          repoId: item.repoId
+        },
+        taskSourceContext: getTaskPageRepoSourceContext(getWorkItemRepo(repos, item), 'gitea'),
+        prefilledName: getGiteaWorkItemWorkspaceSeed(item),
+        initialRepoId: item.repoId,
+        telemetrySource: 'sidebar'
+      })
+    },
+    [openModal, repos]
+  )
+  return Object.assign(model, {
+    openComposerForItem,
+    handleUseWorkItem,
+    handleOpenOrUseGitHubWorkItem,
+    openComposerForGitLabItem,
+    handleUseGitLabItem,
+    handleUseGiteaItem
+  })
 }
 export type TaskPageWorkspaceActionsModel = ReturnType<
   typeof useTaskPageWorkspaceActions<TaskPageSearchActionsModel>
