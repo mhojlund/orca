@@ -3,6 +3,7 @@ import type {
   BitbucketConnectResult,
   BitbucketConnectionStatus
 } from '../../../shared/bitbucket/bitbucket-credentials'
+import type { GitHubRepoSelectorArgs, GithubWorkItemApi } from '../github/github-work-item-api'
 import type {
   GiteaConnectArgs,
   GiteaConnectResult,
@@ -34,7 +35,34 @@ export type HostedReviewApi = {
   createStacked: (args: CreateStackedHostedReviewArgs) => Promise<CreateStackedHostedReviewResult>
 }
 
-export type GiteaApi = {
+export type GiteaWorkItemApi = Pick<
+  GithubWorkItemApi,
+  | 'issue'
+  | 'workItem'
+  | 'workItemByOwnerRepo'
+  | 'workItemDetails'
+  | 'notifyWorkItemMutated'
+  | 'createIssue'
+  | 'countWorkItems'
+  | 'listWorkItems'
+  | 'updateIssue'
+  | 'addIssueComment'
+  | 'listLabels'
+  | 'listAssignableUsers'
+  | 'onWorkItemMutated'
+> & {
+  /** Gitea stores images as assets of an existing issue. */
+  uploadImage: (
+    args: GitHubRepoSelectorArgs & {
+      number: number
+      fileName: string
+      contentType: string
+      bytes: Uint8Array
+    }
+  ) => Promise<{ url: string }>
+}
+
+export type GiteaApi = GiteaWorkItemApi & {
   instances: {
     connect: (args: GiteaConnectArgs) => Promise<GiteaConnectResult>
     disconnect: (instanceId: string) => Promise<void>

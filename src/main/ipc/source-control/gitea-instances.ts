@@ -5,6 +5,7 @@ import {
   getGiteaConnectionStatus
 } from '../../gitea/instances/gitea-instance-connection'
 import { _resetPreflightCache } from '../../preflight/agent-detection'
+import { jsonRecord } from '../../gitea/gitea-json-fields'
 import {
   giteaConnectFailure,
   type GiteaConnectArgs,
@@ -13,11 +14,8 @@ import {
 } from '../../../shared/gitea/gitea-instance-types'
 
 function normalizeConnectInput(value: unknown): GiteaConnectArgs | null {
-  if (!value || typeof value !== 'object') {
-    return null
-  }
-  const raw = value as Record<string, unknown>
-  if (typeof raw.baseUrl !== 'string' || typeof raw.token !== 'string') {
+  const raw = jsonRecord(value)
+  if (!raw || typeof raw.baseUrl !== 'string' || typeof raw.token !== 'string') {
     return null
   }
   return { baseUrl: raw.baseUrl, token: raw.token }

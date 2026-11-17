@@ -7,6 +7,7 @@ import { createIntegrationStateFileCache } from '../../credentials/integration-s
 import { createIntegrationTokenFileCache } from '../../credentials/integration-token-file-cache'
 import type { SecretAtRestProtection } from '../../../shared/secret-at-rest-protection'
 import type { GiteaInstance } from '../../../shared/gitea/gitea-instance-types'
+import { jsonRecord } from '../gitea-json-fields'
 
 type GiteaInstanceFile = { version: 1; instances: GiteaInstance[] }
 
@@ -37,10 +38,10 @@ function str(value: unknown): string | null {
 }
 
 function normalizeInstance(input: unknown): GiteaInstance | null {
-  if (!input || typeof input !== 'object') {
+  const r = jsonRecord(input)
+  if (!r) {
     return null
   }
-  const r = input as Record<string, unknown>
   const id = str(r.id)
   const host = str(r.host)
   const webBaseUrl = str(r.webBaseUrl)
@@ -66,8 +67,8 @@ function readInstanceFileFromDisk(): GiteaInstanceFile {
     return { version: 1, instances: [] }
   }
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf-8')) as Partial<GiteaInstanceFile>
-    const instances = Array.isArray(parsed.instances)
+    const parsed = jsonRecord(JSON.parse(readFileSync(path, 'utf-8')))
+    const instances = Array.isArray(parsed?.instances)
       ? parsed.instances
           .map(normalizeInstance)
           .filter((instance): instance is GiteaInstance => instance !== null)

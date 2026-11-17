@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/class-names'
 import { preventOutsideDismissWhenDirty } from '@/lib/overlay-interaction/outside-dismiss-guard'
 import { giteaConnectErrorText } from '@/lib/source-control/remote/gitea-connect-error-copy'
 import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
@@ -27,8 +26,6 @@ type GiteaInstanceDialogProps = {
   initialBaseUrl?: string | null
   lockBaseUrl?: boolean
   onConnected?: () => void
-  overlayClassName?: string
-  contentClassName?: string
 }
 
 function tokenSettingsUrl(baseUrl: string): string | null {
@@ -53,9 +50,7 @@ export function GiteaInstanceDialog({
   onOpenChange,
   initialBaseUrl,
   lockBaseUrl = false,
-  onConnected,
-  overlayClassName,
-  contentClassName
+  onConnected
 }: GiteaInstanceDialogProps): React.JSX.Element {
   const t = useTranslate()
   const mountedRef = useMountedRef()
@@ -138,8 +133,7 @@ export function GiteaInstanceDialog({
     <Dialog open={open} onOpenChange={(next) => !connecting && onOpenChange(next)}>
       <DialogContent
         scrollable
-        overlayClassName={overlayClassName}
-        className={cn('sm:max-w-lg', contentClassName)}
+        className="sm:max-w-lg"
         onPointerDownOutside={guardOutsideDismiss}
         onInteractOutside={guardOutsideDismiss}
         onKeyDown={(event) => {
@@ -149,8 +143,8 @@ export function GiteaInstanceDialog({
           }
         }}
       >
-        <DialogHeader className="gap-3">
-          <DialogTitle className="leading-tight">
+        <DialogHeader>
+          <DialogTitle>
             {t('auto.components.settings.gitea.instance.dialog.title', 'Connect Gitea / Forgejo')}
           </DialogTitle>
           <DialogDescription>
@@ -162,7 +156,7 @@ export function GiteaInstanceDialog({
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor={baseUrlId} className="text-xs">
+            <Label htmlFor={baseUrlId}>
               {t('auto.components.settings.gitea.instance.dialog.baseUrl', 'Instance URL')}
             </Label>
             <Input
@@ -179,7 +173,7 @@ export function GiteaInstanceDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={tokenId} className="text-xs">
+            <Label htmlFor={tokenId}>
               {t('auto.components.settings.gitea.instance.dialog.token', 'Personal access token')}
             </Label>
             <div className="flex items-center gap-2">

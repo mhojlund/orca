@@ -14,6 +14,7 @@ import {
   type GiteaServerKind
 } from '../../../shared/gitea/gitea-instance-types'
 import { getGiteaEnvConfig } from './gitea-env-config'
+import { jsonRecord, jsonString } from '../gitea-json-fields'
 
 const VERIFY_TIMEOUT_MS = 6000
 
@@ -42,8 +43,7 @@ async function detectServerKind(
 ): Promise<{ kind: GiteaServerKind; version: string | null } | null> {
   const forgejo = await fetchJson(`${webBaseUrl}/api/forgejo/v1/version`, token)
   if (forgejo?.status === 200) {
-    const version = (forgejo.body as { version?: string } | null)?.version ?? null
-    return { kind: 'forgejo', version }
+    return { kind: 'forgejo', version: jsonString(jsonRecord(forgejo.body), 'version') }
   }
   return null
 }
@@ -65,7 +65,8 @@ export async function connectGiteaInstance(input: GiteaConnectArgs): Promise<Git
   if (version.status === 401 || version.status === 403) {
     return giteaConnectFailure('rejected')
   }
-  if (version.status !== 200 || !(version.body as { version?: unknown } | null)?.version) {
+  const serverVersion = jsonString(jsonRecord(version.body), 'version')
+  if (version.status !== 200 || !serverVersion) {
     return giteaConnectFailure('notGitea')
   }
   const user = await fetchJson(`${apiBaseUrl}/user`, token)
@@ -75,16 +76,19 @@ export async function connectGiteaInstance(input: GiteaConnectArgs): Promise<Git
   if (user.status !== 200) {
     return giteaConnectFailure(user.status === 401 || user.status === 403 ? 'rejected' : 'notGitea')
   }
-  const profile = user.body as { login?: string; username?: string; full_name?: string } | null
+  const profile = jsonRecord(user.body)
   const forgejo = await detectServerKind(webBaseUrl, token)
   const instance: GiteaInstance = {
     id: webBaseUrl,
     host: new URL(webBaseUrl).hostname.toLowerCase(),
     webBaseUrl,
     apiBaseUrl,
-    account: profile?.login ?? profile?.username ?? profile?.full_name ?? null,
+    account:
+      jsonString(profile, 'login') ??
+      jsonString(profile, 'username') ??
+      jsonString(profile, 'full_name'),
     serverKind: forgejo?.kind ?? 'gitea',
-    serverVersion: forgejo?.version ?? (version.body as { version: string }).version,
+    serverVersion: forgejo?.version ?? serverVersion,
     updatedAt: new Date().toISOString()
   }
   saveGiteaInstance(instance, token)

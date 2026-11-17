@@ -112,6 +112,25 @@ const COPY: Record<CodeHostFailureCode, (detail: string | null) => string | null
     detail === null
       ? null
       : translate('codeHost.errors.github.rerunFailed', EN['github.rerunFailed'], { detail }),
+  'gitea.repoUnresolved': () =>
+    translate('codeHost.errors.gitea.repoUnresolved', EN['gitea.repoUnresolved']),
+  'gitea.authRequired': () =>
+    translate('codeHost.errors.gitea.authRequired', EN['gitea.authRequired']),
+  'gitea.permissionDenied': () =>
+    translate('codeHost.errors.gitea.permissionDenied', EN['gitea.permissionDenied']),
+  'gitea.notFound': () => translate('codeHost.errors.gitea.notFound', EN['gitea.notFound']),
+  'gitea.unsupportedQualifier': (detail) =>
+    detail === null
+      ? null
+      : translate('codeHost.errors.gitea.unsupportedQualifier', EN['gitea.unsupportedQualifier'], {
+          detail
+        }),
+  'gitea.closeReasonUnsupported': () =>
+    translate('codeHost.errors.gitea.closeReasonUnsupported', EN['gitea.closeReasonUnsupported']),
+  'gitea.requestFailed': (detail) =>
+    detail === null
+      ? null
+      : translate('codeHost.errors.gitea.requestFailed', EN['gitea.requestFailed'], { detail }),
   'gitlab.projectUnresolved': () =>
     translate('codeHost.errors.gitlab.projectUnresolved', EN['gitlab.projectUnresolved']),
   'gitlab.unexpectedResponse': () =>

@@ -26820,6 +26820,15 @@
         "jobLogPermissionDenied": "You don't have permission to read this job's log. Check your GitLab token scopes.",
         "jobProjectNotFound": "Could not find this job's GitLab project.",
         "jobLogFailed": "Failed to load the job log: {{detail}}"
+      },
+      "gitea": {
+        "repoUnresolved": "Could not resolve the Gitea/Forgejo repository for this checkout",
+        "authRequired": "Connect this Gitea/Forgejo instance in Settings > Integrations to see private repositories and use @me filters.",
+        "permissionDenied": "You don't have permission to do this. Check your Gitea/Forgejo token scopes.",
+        "notFound": "Not found on Gitea/Forgejo. It may have been deleted, or issues are disabled.",
+        "unsupportedQualifier": "Gitea/Forgejo ignored these filters: {{detail}}",
+        "closeReasonUnsupported": "Gitea/Forgejo can only close issues as completed.",
+        "requestFailed": "Gitea/Forgejo request failed: {{detail}}"
       }
     },
     "startPoint": {
