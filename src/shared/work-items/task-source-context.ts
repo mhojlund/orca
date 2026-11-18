@@ -226,6 +226,7 @@ function normalizeTaskProvider(value: unknown): TaskProvider | null {
   switch (value) {
     case 'github':
     case 'gitlab':
+    case 'gitea':
     case 'linear':
     case 'jira':
       return value

@@ -285,6 +285,7 @@ export const EXECUTION_HOST_METHODS = [
   'worktree.listRetiredNames',
   'worktree.prefetchCreateBase',
   'worktree.ps',
+  'worktree.resolveGiteaPrBase',
   'worktree.resolveMrBase',
   'worktree.resolvePrBase',
   'worktree.rm',

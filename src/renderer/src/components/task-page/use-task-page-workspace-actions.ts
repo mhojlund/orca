@@ -129,7 +129,7 @@ export function useTaskPageWorkspaceActions<Model extends TaskPageWorkspaceActio
       openModal('new-workspace-composer', {
         linkedWorkItem: {
           provider: 'gitea',
-          type: 'issue',
+          type: item.type,
           number: item.number,
           title: item.title,
           url: item.url,

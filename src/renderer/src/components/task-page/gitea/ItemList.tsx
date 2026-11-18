@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import type { TaskPageComposerActionsModel } from '../use-task-page-composer-actions'
-import { useIntlLocale, useTranslate } from '@/i18n/use-translate'
+import { useTranslate } from '@/i18n/use-translate'
 import { useAppStore } from '@/store'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, ExternalLink } from 'lucide-react'
-import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
+import { GiteaItemRow } from './ItemRow'
 import { GiteaInstanceDialog } from '@/components/integrations/source-control/gitea-instance-dialog'
 
-const GRID = 'grid-cols-[80px_minmax(0,3fr)_120px_110px_50px]'
+const ISSUE_GRID = 'grid-cols-[80px_minmax(0,3fr)_120px_110px_50px]'
+const PR_GRID = 'grid-cols-[80px_minmax(0,3fr)_90px_130px_120px_90px_110px_50px]'
 
 export function TaskPageGiteaItemList({
   model
@@ -16,9 +15,9 @@ export function TaskPageGiteaItemList({
   model: TaskPageComposerActionsModel
 }): React.JSX.Element {
   const t = useTranslate()
-  const intlLocale = useIntlLocale()
   const [connectOpen, setConnectOpen] = useState(false)
   const {
+    giteaKind,
     giteaItems,
     giteaLoading,
     giteaError,
@@ -28,6 +27,7 @@ export function TaskPageGiteaItemList({
     openGiteaDetailPage,
     handleUseGiteaItem
   } = model
+  const grid = giteaKind === 'prs' ? PR_GRID : ISSUE_GRID
   const openItem = (item: (typeof giteaItems)[number]): void => {
     useAppStore.getState().recordFeatureInteraction('gitea-tasks')
     openGiteaDetailPage(item)
@@ -35,10 +35,17 @@ export function TaskPageGiteaItemList({
   return (
     <div className="flex min-h-0 max-h-full flex-col rounded-md border border-t-0 border-border/50 bg-muted/50 overflow-hidden rounded-t-none shadow-sm">
       <div
-        className={`flex-none grid ${GRID} gap-3 border-b border-border/50 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground`}
+        className={`flex-none grid ${grid} gap-3 border-b border-border/50 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground`}
       >
         <span>{t('auto.components.TaskPage.eb10c32872', 'ID')}</span>
         <span>{t('auto.components.TaskPage.16cba35bee', 'Title')}</span>
+        {giteaKind === 'prs' ? (
+          <>
+            <span>{t('auto.components.TaskPage.f6fa3c97d0', 'Reviewers')}</span>
+            <span>{t('auto.components.TaskPage.a7396b05c6', 'Checks')}</span>
+            <span>{t('auto.components.TaskPage.443f7dd928', 'Merge')}</span>
+          </>
+        ) : null}
         <span>{t('auto.components.TaskPage.giteaState', 'State')}</span>
         <span>{t('auto.components.TaskPage.f362667d55', 'Updated')}</span>
         <span />
@@ -60,13 +67,14 @@ export function TaskPageGiteaItemList({
         {giteaLoading && giteaItems.length === 0 ? (
           <div className="divide-y divide-border/50">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className={`grid w-full gap-3 px-3 py-2 ${GRID}`}>
+              <div key={i} className={`grid w-full gap-3 px-3 py-2 ${grid}`}>
                 <div className="h-4 w-16 animate-pulse rounded bg-muted/70" />
                 <div>
                   <div className="h-4 w-3/5 animate-pulse rounded bg-muted/70" />
                 </div>
-                <div className="h-3 w-20 animate-pulse rounded bg-muted/60" />
-                <div className="h-3 w-20 animate-pulse rounded bg-muted/60" />
+                {Array.from({ length: giteaKind === 'prs' ? 6 : 2 }).map((__, cell) => (
+                  <div key={cell} className="h-3 w-20 animate-pulse rounded bg-muted/60" />
+                ))}
                 <div />
               </div>
             ))}
@@ -80,7 +88,9 @@ export function TaskPageGiteaItemList({
                     'auto.components.taskPageEmptyState.noProjectSourcesTitle',
                     'No project sources selected'
                   )
-                : t('auto.components.TaskPage.giteaEmptyTitle', 'No Gitea issues')}
+                : giteaKind === 'prs'
+                  ? t('auto.components.TaskPage.giteaEmptyPrsTitle', 'No Gitea pull requests')
+                  : t('auto.components.TaskPage.giteaEmptyTitle', 'No Gitea issues')}
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
               {selectedRepos.length === 0
@@ -88,75 +98,27 @@ export function TaskPageGiteaItemList({
                     'auto.components.taskPageEmptyState.noProjectSourcesDescription',
                     'Select at least one project source so Orca knows which host/account to fetch tasks from.'
                   )
-                : t(
-                    'auto.components.TaskPage.giteaEmptyDescription',
-                    'No Gitea or Forgejo issues match this filter.'
-                  )}
+                : giteaKind === 'prs'
+                  ? t(
+                      'auto.components.TaskPage.giteaEmptyPrsDescription',
+                      'No Gitea or Forgejo pull requests match this filter.'
+                    )
+                  : t(
+                      'auto.components.TaskPage.giteaEmptyDescription',
+                      'No Gitea or Forgejo issues match this filter.'
+                    )}
             </p>
           </div>
         ) : null}
         <div className="divide-y divide-border/50">
           {giteaItems.map((item) => (
-            // Why: div role="button" not a <button> — it nests an open-in-browser button, and button-in-button is invalid HTML.
-            <div
-              role="button"
-              tabIndex={0}
+            <GiteaItemRow
               key={`${item.repoId}:${item.repoHostId ?? ''}:${item.id}`}
-              onClick={() => openItem(item)}
-              onKeyDown={(e) => {
-                if (e.target !== e.currentTarget) {
-                  return
-                }
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  openItem(item)
-                }
-              }}
-              className={`grid w-full cursor-pointer gap-3 px-3 py-2 text-left ${GRID} hover:bg-muted/50`}
-            >
-              <span className="font-mono text-xs text-muted-foreground">#{item.number}</span>
-              <span className="min-w-0 truncate text-sm">{item.title}</span>
-              <span className="text-xs text-muted-foreground">{item.state}</span>
-              <span className="text-xs text-muted-foreground">
-                {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString(intlLocale) : ''}
-              </span>
-              <div className="flex items-center justify-end gap-1">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      data-contextual-tour-target="tasks-start-workspace"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        handleUseGiteaItem(item)
-                      }}
-                      aria-label={t(
-                        'auto.components.TaskPage.startWorkspaceFromIssue',
-                        'Start workspace from issue {{number}}',
-                        { number: item.number }
-                      )}
-                    >
-                      <ArrowRight className="size-3.5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={6}>
-                    {t('auto.components.TaskPage.9497f2787c', 'Start workspace')}
-                  </TooltipContent>
-                </Tooltip>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    openAppHttpLink(item.url, { event: e })
-                  }}
-                  aria-label={t('auto.components.TaskPage.giteaOpenInBrowser', 'Open in Gitea')}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <ExternalLink className="size-3.5" />
-                </button>
-              </div>
-            </div>
+              item={item}
+              grid={grid}
+              onOpen={() => openItem(item)}
+              onStart={() => handleUseGiteaItem(item)}
+            />
           ))}
         </div>
       </div>

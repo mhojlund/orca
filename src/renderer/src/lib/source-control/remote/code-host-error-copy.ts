@@ -250,6 +250,28 @@ const START_POINT_COPY: Record<
           'codeHost.startPoint.gitlab.forkHeadUnresolved',
           START_EN['gitlab.forkHeadUnresolved'],
           { number }
+        ),
+  'gitea.remoteNotFound': () =>
+    translate('codeHost.startPoint.gitea.remoteNotFound', START_EN['gitea.remoteNotFound']),
+  'gitea.prNotFound': ({ number }) =>
+    number === null
+      ? null
+      : translate('codeHost.startPoint.gitea.prNotFound', START_EN['gitea.prNotFound'], { number }),
+  'gitea.prHeadBranchMissing': ({ number }) =>
+    number === null
+      ? null
+      : translate(
+          'codeHost.startPoint.gitea.prHeadBranchMissing',
+          START_EN['gitea.prHeadBranchMissing'],
+          { number }
+        ),
+  'gitea.forkHeadUnresolved': ({ number }) =>
+    number === null
+      ? null
+      : translate(
+          'codeHost.startPoint.gitea.forkHeadUnresolved',
+          START_EN['gitea.forkHeadUnresolved'],
+          { number }
         )
 }
 
