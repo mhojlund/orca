@@ -33,6 +33,9 @@ export function RowIcon({ row }: { row: RowEntry }): React.JSX.Element {
       <CircleDot className="size-3.5 shrink-0 text-muted-foreground" />
     )
   }
+  if (row.kind === 'gitea') {
+    return <CircleDot className="size-3.5 shrink-0 text-muted-foreground" />
+  }
   if (row.kind === 'gitlab') {
     return row.item.type === 'mr' ? (
       <GitMerge className="size-3.5 shrink-0 text-muted-foreground" />
@@ -115,6 +118,13 @@ export function RowLabel({
     )
   }
   if (row.kind === 'github') {
+    return (
+      <span className="min-w-0 truncate">
+        <span className="font-medium text-foreground">#{row.item.number}</span> {row.item.title}
+      </span>
+    )
+  }
+  if (row.kind === 'gitea') {
     return (
       <span className="min-w-0 truncate">
         <span className="font-medium text-foreground">#{row.item.number}</span> {row.item.title}

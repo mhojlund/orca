@@ -114,6 +114,16 @@ export function buildGitHubWorkspaceSource(item: {
   return { provider: 'github', ...item }
 }
 
+export function buildGiteaWorkspaceSource(item: {
+  type: 'issue'
+  number: number
+  title: string
+  url: string
+  repoId?: string
+}): GiteaWorkspaceSource {
+  return { provider: 'gitea', ...item }
+}
+
 export function buildGitLabWorkspaceSource(item: {
   type: 'issue' | 'mr'
   number: number

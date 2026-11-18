@@ -126,6 +126,11 @@ export function useWorkItemSourceFoundation(props: NormalizedWorkItemSourceSearc
                 projectId: repo.id,
                 repo
               }),
+        giteaSourceContext: buildTaskSourceContextFromRepo({
+          provider: 'gitea',
+          projectId: repo.id,
+          repo
+        }),
         gitlabSourceContext:
           repo.id === selectedRepo?.id && gitlabSourceContext?.provider === 'gitlab'
             ? gitlabSourceContext
@@ -284,6 +289,7 @@ export function useWorkItemSourceFoundation(props: NormalizedWorkItemSourceSearc
     selectedRepo,
     githubSourceContext,
     gitlabSourceContext,
+    giteaEnabled: props.giteaEnabled === true,
     repoBackedSearchTargets,
     linearSourceContext,
     jiraConnectionStatus,
