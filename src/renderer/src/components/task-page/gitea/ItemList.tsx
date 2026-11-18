@@ -5,9 +5,22 @@ import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import { GiteaItemRow } from './ItemRow'
 import { GiteaInstanceDialog } from '@/components/integrations/source-control/gitea-instance-dialog'
+import { parseRemoteRepo } from '../../right-sidebar/source-control/review/remote-repo'
 
 const ISSUE_GRID = 'grid-cols-[80px_minmax(0,3fr)_120px_110px_50px]'
 const PR_GRID = 'grid-cols-[80px_minmax(0,3fr)_90px_130px_120px_90px_110px_50px]'
+
+function instanceUrlFromRepoRemote(remoteUrl: string | undefined): string | null {
+  const remote = remoteUrl ? parseRemoteRepo(remoteUrl) : null
+  if (!remote) {
+    return null
+  }
+  try {
+    return new URL(remote.webBaseUrl).origin
+  } catch {
+    return null
+  }
+}
 
 export function TaskPageGiteaItemList({
   model
@@ -125,6 +138,7 @@ export function TaskPageGiteaItemList({
       <GiteaInstanceDialog
         open={connectOpen}
         onOpenChange={setConnectOpen}
+        initialBaseUrl={instanceUrlFromRepoRemote(selectedRepos[0]?.gitRemoteIdentity?.remoteUrl)}
         onConnected={refreshGiteaItems}
       />
     </div>

@@ -60,7 +60,9 @@ export function getWorkspaceReferenceRequest(
 ): WorkspaceReferenceRequest {
   const sourceContext =
     item.taskSourceContext ??
-    (item.type !== 'issue' && repo && (item.provider === 'github' || item.provider === 'gitlab')
+    (item.type !== 'issue' &&
+    repo &&
+    (item.provider === 'github' || item.provider === 'gitlab' || item.provider === 'gitea')
       ? buildTaskSourceContextFromRepo({
           provider: item.provider,
           projectId: workspace.projectId ?? repo.id,
@@ -68,6 +70,7 @@ export function getWorkspaceReferenceRequest(
         })
       : item.provider === 'github' ||
           item.provider === 'gitlab' ||
+          item.provider === 'gitea' ||
           item.provider === 'linear' ||
           item.provider === 'jira'
         ? getWorkspaceAttachmentSourceContext(item.provider, repo, workspace)
