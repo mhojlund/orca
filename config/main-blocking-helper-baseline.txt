@@ -551,6 +551,8 @@
 2 src/main/git/worktrees/catalog/worktree-git-path.ts
 1 src/main/git/worktrees/catalog/wsl-worktree-git-path.ts
 3 src/main/git/worktrees/content-paths/worktree-shared-directories.ts
+3 src/main/gitea/instances/gitea-instance-connection.ts # Gitea instance tokens use the same small synchronous credential files as Bitbucket
+7 src/main/gitea/instances/gitea-instance-store.ts # Gitea instance tokens use the same small synchronous credential files as Bitbucket
 1 src/main/github/accounts/account-binding-required-host.ts
 1 src/main/github/client/fetch/repo-slug-upstream.ts
 17 src/main/github/pr-watch/pr-head-evaluation.ts
@@ -708,6 +710,7 @@
 3 src/main/ipc/settings/settings.ts
 3 src/main/ipc/shell/shell.ts
 3 src/main/ipc/source-control/bitbucket.ts
+2 src/main/ipc/source-control/gitea-instances.ts # Gitea instance tokens use the same small synchronous credential files as Bitbucket
 5 src/main/ipc/source-control/hosted-review.ts
 5 src/main/ipc/speech.ts
 3 src/main/ipc/ssh/plain-ssh-terminal-handlers.ts
@@ -1332,6 +1335,7 @@
 1 src/main/runtime/rpc/methods/orcad/orcad-migration.ts
 1 src/main/runtime/rpc/methods/orchestration/messaging/check-mail-reconciliation.ts
 1 src/main/runtime/rpc/methods/orchestration/runs/runs.ts
+2 src/main/runtime/rpc/methods/source-control/gitea/gitea.ts # Gitea instance tokens use the same small synchronous credential files as Bitbucket
 1 src/main/runtime/rpc/methods/terminal/session-terminal-scrollback.ts
 1 src/main/runtime/rpc/methods/workspaces/worktree.ts
 5 src/main/runtime/rpc/server/network-source-policy-store.ts

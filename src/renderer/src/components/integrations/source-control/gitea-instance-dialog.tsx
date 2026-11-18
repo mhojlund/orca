@@ -73,6 +73,7 @@ export function GiteaInstanceDialog({
     setConnectState('idle')
     setConnectError(null)
   })
+  // oxlint-disable-next-line react-doctor/no-derived-state-effect -- Why: resets the form only when the dialog opens, never on status refreshes.
   useLayoutEffect(() => {
     if (open) {
       seed()
