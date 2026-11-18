@@ -5,19 +5,19 @@ import {
   disconnectGiteaInstance,
   getGiteaConnectionStatus
 } from '../../../../../gitea/instances/gitea-instance-connection'
-import { RepoSelector } from '../../../../../../shared/rpc-contract/github-repo-target-params'
+import { RepoSelector } from '../../../../../../shared/rpc-contract/github/github-repo-target-params'
 import {
   WorkItem,
   WorkItemByOwnerRepo,
   WorkItemsCount,
   WorkItemsList
-} from '../../../../../../shared/rpc-contract/github-repo-work-item-params'
+} from '../../../../../../shared/rpc-contract/github/github-repo-work-item-params'
 import {
   CreateIssue,
   Issue,
   IssueComment,
   UpdateIssue
-} from '../../../../../../shared/rpc-contract/github-issue-params'
+} from '../../../../../../shared/rpc-contract/github/github-issue-params'
 import {
   GiteaInstanceConnect,
   GiteaInstanceDisconnect

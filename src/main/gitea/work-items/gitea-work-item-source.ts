@@ -1,5 +1,5 @@
-import type { IssueSourcePreference } from '../../../shared/repo-types'
-import type { GitHubOwnerRepo } from '../../../shared/github/pull-request-types'
+import type { IssueSourcePreference } from '../../../shared/repository/repo-types'
+import type { GitHubRepositoryIdentity as GitHubOwnerRepo } from '../../../shared/github/repositories/repository-identity'
 import type { RemoteRefLocalGitOptions } from '../../git/remotes/remote-ref-probe-cache'
 import { getGiteaRepoRefForRemote, type GiteaRepoRef } from '../repository-ref'
 import { isGiteaHost } from './gitea-host-eligibility'

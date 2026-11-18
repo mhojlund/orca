@@ -9,10 +9,10 @@ import {
   getGitHubWorkItemRequestContext,
   listGitHubWorkItemsForRepo
 } from '@/store/github/work-items/work-item-routing'
-import { mapSettledWithConcurrency } from '../../../../../shared/map-with-concurrency'
-import { getRepoExecutionHostId } from '../../../../../shared/execution-host'
-import type { GitHubWorkItem } from '../../../../../shared/github/work-item-types'
-import type { Repo } from '../../../../../shared/repo-types'
+import { mapSettledWithConcurrency } from '../../../../../shared/concurrency/map-with-concurrency'
+import { getRepoExecutionHostId } from '../../../../../shared/execution-host/execution-host'
+import type { GitHubWorkItem } from '../../../../../shared/github/work-items/work-item-types'
+import type { Repo } from '../../../../../shared/repository/repo-types'
 import { giteaIssueQuery } from './gitea-task-filters'
 
 const GITEA_TASK_FETCH_CONCURRENCY = 6

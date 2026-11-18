@@ -1,6 +1,12 @@
-import type { GitHubAssignableUser, IssueInfo } from '../../../shared/github/pull-request-types'
-import type { GitHubWorkItem } from '../../../shared/github/work-item-types'
-import type { GitHubIssueTimelineItem, PRComment } from '../../../shared/github/comment-types'
+import type {
+  GitHubAssignableUser,
+  IssueInfo
+} from '../../../shared/github/pull-requests/pull-request-types'
+import type { GitHubWorkItem } from '../../../shared/github/work-items/work-item-types'
+import type {
+  GitHubIssueTimelineItem,
+  PRComment
+} from '../../../shared/github/comments/comment-types'
 import type { GiteaRepoRef } from '../repository-ref'
 
 export type MainGiteaWorkItem = Omit<GitHubWorkItem, 'repoId'>

@@ -1,10 +1,10 @@
-import type { GitHubWorkItemDetails } from '../../../shared/github/work-item-types'
+import type { GitHubRepositoryIdentity as GitHubOwnerRepo } from '../../../shared/github/repositories/repository-identity'
+import type { GitHubWorkItemDetails } from '../../../shared/github/work-items/work-item-types'
 import type {
   GitHubAssignableUser,
-  GitHubOwnerRepo,
   IssueInfo
-} from '../../../shared/github/pull-request-types'
-import type { IssueSourcePreference } from '../../../shared/repo-types'
+} from '../../../shared/github/pull-requests/pull-request-types'
+import type { IssueSourcePreference } from '../../../shared/repository/repo-types'
 import type { RemoteRefLocalGitOptions } from '../../git/remotes/remote-ref-probe-cache'
 import { HostedReviewApiRequestError } from '../../source-control/hosted-review-api-request'
 import { normalizeGiteaApiBaseUrl } from '../gitea-api-base-url'

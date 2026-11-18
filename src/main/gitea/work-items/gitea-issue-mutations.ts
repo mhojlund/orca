@@ -1,15 +1,15 @@
-import type { GitHubCommentResult } from '../../../shared/github/comment-types'
+import type { GitHubCommentResult } from '../../../shared/github/comments/comment-types'
 import type {
   GitHubCreateIssueFields,
   GitHubCreateIssueResult,
   GitHubIssueUpdate
-} from '../../../shared/issue-mutation-types'
-import type { IssueSourcePreference } from '../../../shared/repo-types'
+} from '../../../shared/work-items/issue-mutation-types'
+import type { IssueSourcePreference } from '../../../shared/repository/repo-types'
 import {
   classifiedFailure,
   codeHostFailure,
   type CodeHostFailure
-} from '../../../shared/code-host-failure-copy'
+} from '../../../shared/source-control/code-host-failure-copy'
 import type { RemoteRefLocalGitOptions } from '../../git/remotes/remote-ref-probe-cache'
 import type { GiteaRepoRef } from '../repository-ref'
 import { giteaGet, giteaSend, repoApiPath } from './gitea-api'

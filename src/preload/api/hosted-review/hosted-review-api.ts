@@ -8,7 +8,7 @@ import type {
   GiteaConnectArgs,
   GiteaConnectResult,
   GiteaConnectionStatus
-} from '../../shared/gitea/gitea-instance-types'
+} from '../../../shared/gitea/gitea-instance-types'
 import type {
   CreateHostedReviewArgs,
   CreateHostedReviewResult,

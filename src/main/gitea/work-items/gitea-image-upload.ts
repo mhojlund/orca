@@ -1,5 +1,5 @@
-import { assertGitHubImage } from '../../../shared/github/image-attachment'
-import type { IssueSourcePreference } from '../../../shared/repo-types'
+import { assertGitHubImage } from '../../../shared/github/attachments/image-attachment'
+import type { IssueSourcePreference } from '../../../shared/repository/repo-types'
 import type { RemoteRefLocalGitOptions } from '../../git/remotes/remote-ref-probe-cache'
 import { giteaUpload, repoApiPath } from './gitea-api'
 import { resolveGiteaItemRepo } from './gitea-work-item-source'

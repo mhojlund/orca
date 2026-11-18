@@ -36,7 +36,7 @@ export function planGiteaQuery(rawQuery: string | undefined): GiteaListPlan {
     mergedOnly: parsed.state === 'merged',
     draftOnly: parsed.draft,
     assignee: parsed.assignee,
-    author: parsed.author,
+    author: parsed.authors[0] ?? null,
     reviewRequestedByViewer: parsed.reviewRequested === '@me',
     labels: parsed.labels,
     freeText: parsed.freeText,

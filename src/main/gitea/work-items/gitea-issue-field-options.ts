@@ -1,5 +1,5 @@
-import type { GitHubAssignableUser } from '../../../shared/github/pull-request-types'
-import type { IssueSourcePreference } from '../../../shared/repo-types'
+import type { GitHubAssignableUser } from '../../../shared/github/pull-requests/pull-request-types'
+import type { IssueSourcePreference } from '../../../shared/repository/repo-types'
 import type { RemoteRefLocalGitOptions } from '../../git/remotes/remote-ref-probe-cache'
 import type { GiteaRepoRef } from '../repository-ref'
 import { giteaGet, repoApiPath } from './gitea-api'

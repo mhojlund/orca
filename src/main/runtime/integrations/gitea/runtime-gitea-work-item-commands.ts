@@ -1,10 +1,10 @@
 import type {
   GitHubCreateIssueFields,
   GitHubIssueUpdate
-} from '../../../../shared/issue-mutation-types'
-import type { GitHubOwnerRepo } from '../../../../shared/github/pull-request-types'
-import { getRepoRoutingConnectionId } from '../../../../shared/execution-host'
-import type { Repo } from '../../../../shared/repo-types'
+} from '../../../../shared/work-items/issue-mutation-types'
+import type { GitHubRepositoryIdentity as GitHubOwnerRepo } from '../../../../shared/github/repositories/repository-identity'
+import { getRepoRoutingConnectionId } from '../../../../shared/execution-host/execution-host'
+import type { Repo } from '../../../../shared/repository/repo-types'
 import type { LocalProjectGhExecOptions } from '../../../workspaces/execution-host/project-runtime-git-options'
 import {
   countGiteaWorkItems,

@@ -1,5 +1,5 @@
-import type { ClassifiedError } from '../../../shared/classified-error'
-import { classifiedCodeHostError } from '../../../shared/code-host-failure-copy'
+import type { ClassifiedError } from '../../../shared/errors/classified-error'
+import { classifiedCodeHostError } from '../../../shared/source-control/code-host-failure-copy'
 import { HostedReviewApiRequestError } from '../../source-control/hosted-review-api-request'
 import { jsonRecord, jsonString } from '../gitea-json-fields'
 

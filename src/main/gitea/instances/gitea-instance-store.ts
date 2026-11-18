@@ -5,7 +5,7 @@ import { writeEncryptedCredential } from '../../credentials/integration-credenti
 import { readCredentialFileProtection } from '../../credentials/credential-file-protection'
 import { createIntegrationStateFileCache } from '../../credentials/integration-state-file-cache'
 import { createIntegrationTokenFileCache } from '../../credentials/integration-token-file-cache'
-import type { SecretAtRestProtection } from '../../../shared/secret-at-rest-protection'
+import type { SecretAtRestProtection } from '../../../shared/secure-storage/secret-at-rest-protection'
 import type { GiteaInstance } from '../../../shared/gitea/gitea-instance-types'
 import { jsonRecord } from '../gitea-json-fields'
 
