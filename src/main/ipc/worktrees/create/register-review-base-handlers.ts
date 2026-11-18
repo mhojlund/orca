@@ -101,6 +101,22 @@ export function registerReviewBaseHandlers(context: WorktreeIpcContext): void {
   )
 
   ipcMain.handle(
+    'worktrees:resolveGiteaPrBase',
+    async (
+      _event,
+      args: { repoId: string; prNumber: number; wakeWslDistro?: boolean }
+    ): Promise<
+      | { baseBranch: string; compareBaseRef?: string; pushTarget?: GitPushTarget }
+      | { error: string }
+    > =>
+      runtime.resolveManagedGiteaPrBase({
+        repoSelector: `id:${args.repoId}`,
+        prNumber: args.prNumber,
+        wakeWslDistro: args.wakeWslDistro
+      })
+  )
+
+  ipcMain.handle(
     'worktrees:resolveMrBase',
     async (
       _event,

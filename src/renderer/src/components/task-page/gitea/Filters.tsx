@@ -7,8 +7,10 @@ import { TaskPageFilterChip } from '../TaskPageFilterChip'
 import { TaskPageRepoPicker } from '../TaskPageRepoPicker'
 import {
   GITEA_INVOLVEMENT_FILTERS,
+  GITEA_KIND_FILTERS,
   GITEA_STATE_FILTERS,
   type GiteaInvolvementFilter,
+  type GiteaKindFilter,
   type GiteaStateFilter
 } from './gitea-task-filters'
 
@@ -19,6 +21,8 @@ export function TaskPageGiteaFilters({
 }): React.JSX.Element {
   const t = useTranslate()
   const {
+    giteaKind,
+    setGiteaKind,
     giteaState,
     setGiteaState,
     giteaInvolvement,
@@ -26,6 +30,10 @@ export function TaskPageGiteaFilters({
     giteaLoading,
     refreshGiteaItems
   } = model
+  const kindLabels: Record<GiteaKindFilter, string> = {
+    issues: t('auto.components.TaskPage.dfc0c79bd8', 'Issues'),
+    prs: t('auto.components.TaskPage.137e2a8a01', 'PRs')
+  }
   const stateLabels: Record<GiteaStateFilter, string> = {
     open: t('auto.components.TaskPage.giteaStateOpen', 'Open'),
     closed: t('auto.components.TaskPage.giteaStateClosed', 'Closed'),
@@ -36,7 +44,7 @@ export function TaskPageGiteaFilters({
     assigned: t('auto.components.TaskPage.giteaInvolvementAssigned', 'Assigned to me'),
     created: t('auto.components.TaskPage.giteaInvolvementCreated', 'Created by me')
   }
-  const refreshLabel = t('auto.components.TaskPage.giteaRefresh', 'Refresh Gitea issues')
+  const refreshLabel = t('auto.components.TaskPage.giteaRefreshItems', 'Refresh Gitea list')
   return (
     <>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -48,6 +56,17 @@ export function TaskPageGiteaFilters({
       >
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="flex flex-wrap gap-2">
+              {GITEA_KIND_FILTERS.map((id) => (
+                <TaskPageFilterChip
+                  key={id}
+                  label={kindLabels[id]}
+                  active={giteaKind === id}
+                  onSelect={() => setGiteaKind(id)}
+                />
+              ))}
+            </div>
+            <span aria-hidden className="h-4 w-px bg-border/60" />
             <div className="flex flex-wrap gap-2">
               {GITEA_STATE_FILTERS.map((id) => (
                 <TaskPageFilterChip

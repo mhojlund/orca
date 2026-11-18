@@ -13,6 +13,7 @@ import {
   planNeedsViewer,
   type GiteaListPlan
 } from './gitea-task-query'
+import { fetchGiteaPullSignals } from './gitea-pull-request-signals'
 import { getGiteaViewerLogin, isGiteaRepoAuthenticated } from './gitea-viewer'
 import {
   mapGiteaWorkItem,
@@ -83,13 +84,20 @@ async function withPullDetails(
       undefined,
       { noCache }
     )
-    return data
+    // Review and check columns only matter while a PR can still change.
+    const signals =
+      data && raw.state !== 'closed' && typeof raw.number === 'number'
+        ? await fetchGiteaPullSignals(repo, raw.number, data, noCache)
+        : null
+    return { data, signals }
   })
   return raws
     .map((raw, index) => {
       const result = settled[index]
       // A failed detail read still lists the PR; only branch/SHA fields are missing.
-      return mapGiteaWorkItem(raw, repo, result.status === 'fulfilled' ? result.value : null)
+      return result.status === 'fulfilled'
+        ? mapGiteaWorkItem(raw, repo, result.value.data, result.value.signals)
+        : mapGiteaWorkItem(raw, repo, null)
     })
     .filter((item): item is MainGiteaWorkItem => item !== null)
 }
