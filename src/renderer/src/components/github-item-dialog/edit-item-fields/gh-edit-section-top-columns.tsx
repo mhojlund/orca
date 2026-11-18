@@ -29,6 +29,7 @@ export function GHEditSectionTopColumns({
   duplicatePickerTitle,
   filteredDuplicateCandidates,
   directDuplicateTarget,
+  closeReasons,
   onStatusOpenChange,
   onAssigneeOpenChange,
   onLabelOpenChange,
@@ -61,6 +62,7 @@ export function GHEditSectionTopColumns({
   duplicatePickerTitle: string
   filteredDuplicateCandidates: GitHubWorkItem[]
   directDuplicateTarget: number | null
+  closeReasons: boolean
   onStatusOpenChange: (open: boolean) => void
   onAssigneeOpenChange: (open: boolean) => void
   onLabelOpenChange: (open: boolean) => void
@@ -92,6 +94,7 @@ export function GHEditSectionTopColumns({
           duplicatePickerTitle={duplicatePickerTitle}
           filteredDuplicateCandidates={filteredDuplicateCandidates}
           directDuplicateTarget={directDuplicateTarget}
+          closeReasons={closeReasons}
           onOpenChange={onStatusOpenChange}
           onStateChange={onStateChange}
           onDuplicateSearchChange={onDuplicateSearchChange}

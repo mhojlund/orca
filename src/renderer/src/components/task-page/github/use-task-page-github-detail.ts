@@ -29,6 +29,7 @@ type TaskPageGitHubDetailInput = Pick<
   | 'setGithubMode'
   | 'gitlabDialogItem'
   | 'setGitlabDialogItem'
+  | 'setGiteaDialogItem'
   | 'appliedTaskSearch'
   | 'githubPerRepoPageLimit'
   | 'githubResumeContextKey'
@@ -52,6 +53,7 @@ export function useTaskPageGitHubDetail<Model extends TaskPageGitHubDetailInput>
     setGithubMode,
     gitlabDialogItem,
     setGitlabDialogItem,
+    setGiteaDialogItem,
     appliedTaskSearch,
     githubPerRepoPageLimit,
     githubResumeContextKey,
@@ -189,6 +191,9 @@ export function useTaskPageGitHubDetail<Model extends TaskPageGitHubDetailInput>
   useEffect(() => {
     setGitlabDialogItem(pageData.openGitLabWorkItem ?? null)
   }, [pageData.openGitLabWorkItem, setGitlabDialogItem])
+  useEffect(() => {
+    setGiteaDialogItem(pageData.openGiteaWorkItem ?? null)
+  }, [pageData.openGiteaWorkItem, setGiteaDialogItem])
   const openGitHubDetailPage = useCallback(
     (item: GitHubWorkItem, initialTab: ItemDialogTab = 'conversation') => {
       const scrollTop = getTaskPageScrollTop(githubListScrollRef, githubListScrollTopRef.current)
@@ -227,6 +232,23 @@ export function useTaskPageGitHubDetail<Model extends TaskPageGitHubDetailInput>
       taskListPositionRef
     ]
   )
+  const openGiteaDetailPage = useCallback(
+    (item: GitHubWorkItem) => {
+      openTaskPage(
+        {
+          taskSource: 'gitea',
+          preselectedRepoId: item.repoId,
+          openGiteaWorkItem: item,
+          openGiteaSourceContext: getTaskPageRepoSourceContext(
+            getWorkItemRepo(repos, item),
+            'gitea'
+          )
+        },
+        { recordTasksInteraction: false }
+      )
+    },
+    [openTaskPage, repos]
+  )
   const openGitLabDetailPage = useCallback(
     (item: GitLabWorkItem) => {
       openTaskPage(
@@ -264,7 +286,8 @@ export function useTaskPageGitHubDetail<Model extends TaskPageGitHubDetailInput>
     gitlabDialogSourceContext,
     setDialogWorkItem,
     openGitHubDetailPage,
-    openGitLabDetailPage
+    openGitLabDetailPage,
+    openGiteaDetailPage
   })
 }
 export type TaskPageGitHubDetailModel = ReturnType<

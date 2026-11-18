@@ -84,6 +84,8 @@ export type TaskPageData = {
   openGitHubInitialTab?: 'conversation' | 'checks' | 'files'
   openGitLabWorkItem?: GitLabWorkItem
   openGitLabSourceContext?: TaskSourceContext | null
+  openGiteaWorkItem?: GitHubWorkItem
+  openGiteaSourceContext?: TaskSourceContext | null
   openLinearIssue?: LinearIssue
   openLinearSourceContext?: TaskSourceContext | null
   openJiraIssue?: JiraIssue

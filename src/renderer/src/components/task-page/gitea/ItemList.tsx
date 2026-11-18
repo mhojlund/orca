@@ -25,12 +25,12 @@ export function TaskPageGiteaItemList({
     giteaAuthRequired,
     refreshGiteaItems,
     selectedRepos,
-    setGiteaDialogItem,
+    openGiteaDetailPage,
     handleUseGiteaItem
   } = model
   const openItem = (item: (typeof giteaItems)[number]): void => {
     useAppStore.getState().recordFeatureInteraction('gitea-tasks')
-    setGiteaDialogItem(item)
+    openGiteaDetailPage(item)
   }
   return (
     <div className="flex min-h-0 max-h-full flex-col rounded-md border border-t-0 border-border/50 bg-muted/50 overflow-hidden rounded-t-none shadow-sm">

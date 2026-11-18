@@ -46,7 +46,11 @@ export const ATTACHMENT_INPUT_KINDS = [
     value: 'azure-devops-pr',
     label: () => translate('workspace.links.kind.azure_devops_pr', 'Azure DevOps PR')
   },
-  { value: 'gitea-pr', label: () => translate('workspace.links.kind.gitea_pr', 'Gitea PR') }
+  { value: 'gitea-pr', label: () => translate('workspace.links.kind.gitea_pr', 'Gitea PR') },
+  {
+    value: 'gitea-issue',
+    label: () => translate('workspace.links.kind.gitea_issue', 'Gitea issue')
+  }
 ] as const
 export type AttachmentInputKind = (typeof ATTACHMENT_INPUT_KINDS)[number]['value']
 
@@ -141,6 +145,9 @@ export function parseWorkspaceAttachmentInput(
   }
   if (kind === 'gitlab-mr' || kind === 'gitlab-issue') {
     return { provider: 'gitlab', type: kind === 'gitlab-mr' ? 'mr' : 'issue', number }
+  }
+  if (kind === 'gitea-issue') {
+    return { provider: 'gitea', type: 'issue', number }
   }
   if (kind === 'bitbucket-pr' || kind === 'azure-devops-pr' || kind === 'gitea-pr') {
     const provider =
