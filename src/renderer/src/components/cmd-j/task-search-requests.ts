@@ -6,6 +6,7 @@ import {
 import { jiraSearchIssuesForTarget } from '@/runtime/jira/runtime-jira-client'
 import { jiraStatusForTarget } from '@/runtime/jira/runtime-jira-project-client'
 import { ipcOrRuntimeTargetForHostId } from '@/runtime/rpc/targets/runtime-client-target'
+import { searchGiteaIssues } from './gitea-task-search'
 import { gitLabApiFor } from '@/runtime/repository-gitlab/gitlab-owner-api'
 import { resolveJiraSourceHostId } from '../../../../shared/jira/jira-source-host'
 import { getJiraAccountLabel } from '@/lib/work-items/jira/jira-account-label'
@@ -61,7 +62,7 @@ export function createCmdJTaskSearchRequests(args: {
       (!filter.hostIds.length || filter.hostIds.includes(getRepoExecutionHostId(repo)))
   )
   for (const repo of getTaskEligibleRepos(eligibleRepos)) {
-    for (const provider of ['github', 'gitlab'] as const) {
+    for (const provider of ['github', 'gitlab', 'gitea'] as const) {
       if (!providers.includes(provider)) {
         continue
       }
@@ -70,6 +71,7 @@ export function createCmdJTaskSearchRequests(args: {
         continue
       }
       if (
+        provider !== 'gitea' &&
         getRepoBackedProviderAvailability({
           provider,
           contexts: [source],
@@ -115,6 +117,9 @@ export function createCmdJTaskSearchRequests(args: {
               .map((issue) =>
                 makeCmdJTaskSearchResult({ provider, issue }, source, repo.id, hostLabel)
               )
+          }
+          if (provider === 'gitea') {
+            return searchGiteaIssues({ repo, source, query, hostLabel, resultLimit: RESULT_LIMIT })
           }
           const result = await gitLabApiFor({
             repoPath: repo.path,

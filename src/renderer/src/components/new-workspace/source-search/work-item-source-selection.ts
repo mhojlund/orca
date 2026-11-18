@@ -4,6 +4,7 @@ import type { JiraSite } from '../../../../../shared/jira/jira-types'
 import {
   buildGitHubWorkspaceSource,
   buildGitLabWorkspaceSource,
+  buildGiteaWorkspaceSource,
   buildLinearWorkspaceSource,
   buildJiraWorkspaceSource,
   type WorkspaceSourceLinkedItem
@@ -14,7 +15,7 @@ import { bindJiraIssueSourceContext } from './use-jira-url-source'
 import type { RowEntry } from '../name-field/smart-workspace-name-field-model'
 
 export type WorkItemSourceContexts = Record<
-  'github' | 'gitlab' | 'linear' | 'jira',
+  'github' | 'gitlab' | 'gitea' | 'linear' | 'jira',
   TaskSourceContext | null
 >
 export function resolveWorkItemSourceRow(
@@ -46,6 +47,13 @@ export function resolveWorkItemSourceRow(
       url,
       repoId,
       taskSourceContext: context ? { ...context, providerIdentity: identity } : undefined
+    }
+  }
+  if (row.kind === 'gitea') {
+    const { number, title, url, repoId } = row.item
+    return {
+      ...buildGiteaWorkspaceSource({ type: 'issue', number, title, url, repoId }),
+      taskSourceContext: contexts.gitea ?? undefined
     }
   }
   if (row.kind === 'linear') {

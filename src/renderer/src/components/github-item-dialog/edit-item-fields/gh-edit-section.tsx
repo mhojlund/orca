@@ -1,3 +1,7 @@
+import {
+  workItemForgeCapabilities,
+  workItemForgeProviderFor
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/store'
@@ -360,6 +364,7 @@ function GHEditSectionItem({
     duplicatePickerTitle,
     filteredDuplicateCandidates,
     directDuplicateTarget,
+    closeReasons: workItemForgeCapabilities(workItemForgeProviderFor(sourceContext)).closeReasons,
     onStatusOpenChange: handleStatusPopoverOpenChange,
     onAssigneeOpenChange: setAssigneePopoverOpen,
     onLabelOpenChange: setLabelPopoverOpen,

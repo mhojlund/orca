@@ -1,3 +1,4 @@
+import type { SmartNameMode, SmartWorkspaceSourceRow } from './smart-workspace-source-row-types'
 import type { GitHubWorkItem } from '../github/work-items/work-item-types'
 import type { GitLabWorkItem } from '../gitlab/gitlab-types'
 import type { JiraIssue } from '../jira/jira-types'
@@ -19,16 +20,7 @@ export {
   isSmartWorkspaceSourceQueryWithinLimit
 } from './smart-workspace-source-query'
 
-export type SmartNameMode = 'smart' | 'github' | 'gitlab' | 'branches' | 'linear' | 'jira' | 'text'
-
-export type SmartWorkspaceSourceRow =
-  | { kind: 'use-name'; value: string; name: string }
-  | { kind: 'create-branch'; value: string; name: string }
-  | { kind: 'github'; value: string; item: GitHubWorkItem }
-  | { kind: 'gitlab'; value: string; item: GitLabWorkItem }
-  | { kind: 'branch'; value: string; refName: string; localBranchName: string; label?: string }
-  | { kind: 'linear'; value: string; issue: LinearIssue }
-  | { kind: 'jira'; value: string; issue: JiraIssue }
+export type { SmartNameMode, SmartWorkspaceSourceRow } from './smart-workspace-source-row-types'
 
 type LinearIssueSourceInput = LinearIssue[] | LinearCollectionResult<LinearIssue> | null | undefined
 
@@ -36,6 +28,7 @@ const EMPTY_HINT_BY_MODE: Record<SmartNameMode, string> = {
   smart: 'Start typing to create a name or find a source.',
   github: 'Start typing to search GitHub PRs and issues.',
   gitlab: 'Start typing to search GitLab MRs and issues.',
+  gitea: 'Start typing to search Gitea issues.',
   branches: 'No matching branches.',
   linear: 'Start typing to search Linear issues.',
   jira: 'Start typing to search Jira issues, or paste an issue URL.',
@@ -200,6 +193,7 @@ export function buildSmartWorkspaceSourceRows({
   gitlabAvailable,
   gitlabItems,
   gitlabUrlIntent,
+  giteaItems = [],
   jiraIntent = false,
   jiraIssue,
   jiraIssues = [],
@@ -216,6 +210,7 @@ export function buildSmartWorkspaceSourceRows({
   gitlabAvailable: boolean
   gitlabItems: GitLabWorkItem[]
   gitlabUrlIntent?: SmartWorkspaceGitLabUrlIntent | null
+  giteaItems?: GitHubWorkItem[]
   jiraIntent?: boolean
   jiraIssue?: JiraIssue | null
   jiraIssues?: JiraIssue[]
@@ -272,6 +267,15 @@ export function buildSmartWorkspaceSourceRows({
       ...gitlabItems.map((item) => ({
         kind: 'gitlab' as const,
         value: `gitlab-${item.repoId}-${item.type}-${item.number}`,
+        item
+      }))
+    )
+  }
+  if (mode === 'gitea') {
+    nextRows.push(
+      ...giteaItems.map((item) => ({
+        kind: 'gitea' as const,
+        value: `gitea-${item.repoId}-${item.number}`,
         item
       }))
     )

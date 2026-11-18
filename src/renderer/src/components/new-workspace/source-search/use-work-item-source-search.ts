@@ -12,6 +12,10 @@ import {
 import { useWorkItemSourceFoundation } from './use-work-item-source-foundation'
 import { useSmartWorkspaceGithubSearch } from './use-smart-workspace-github-search'
 import { useSmartWorkspaceGitlabSearch } from './use-smart-workspace-gitlab-search'
+import {
+  useGiteaSourceContext,
+  useSmartWorkspaceGiteaSearch
+} from './use-smart-workspace-gitea-search'
 import { useWorkItemSourcePresentation } from './use-work-item-source-presentation'
 import { useSmartWorkspaceSecondarySearches } from './use-smart-workspace-secondary-searches'
 
@@ -116,6 +120,17 @@ export function useWorkItemSourceSearch({
     sourceQueryWithinLimit,
     shouldQueryGitlab
   })
+  const giteaSourceContext = useGiteaSourceContext(foundation.selectedRepo)
+  // Why: Gitea is an explicit tab only, so a blended Smart search never probes every repo for it.
+  useSmartWorkspaceGiteaSearch({
+    foundation,
+    shouldQueryGitea:
+      sourceQueryWithinLimit &&
+      !repoBackedSourcesDisabled &&
+      !textOnly &&
+      foundation.giteaEnabled === true &&
+      foundation.mode === 'gitea'
+  })
   const presentation = useWorkItemSourcePresentation(foundation, {
     linearUrlIntent,
     linearUrlIntentOwnsInput,
@@ -128,6 +143,7 @@ export function useWorkItemSourceSearch({
         {
           github: foundation.githubSourceContext,
           gitlab: foundation.gitlabSourceContext ?? null,
+          gitea: giteaSourceContext,
           linear: foundation.linearSourceContext,
           jira: foundation.jiraSource.boundSourceContext ?? foundation.jiraSourceContext
         },
@@ -136,6 +152,7 @@ export function useWorkItemSourceSearch({
     [
       foundation.githubSourceContext,
       foundation.gitlabSourceContext,
+      giteaSourceContext,
       foundation.linearSourceContext,
       foundation.jiraSource.boundSourceContext,
       foundation.jiraSourceContext,

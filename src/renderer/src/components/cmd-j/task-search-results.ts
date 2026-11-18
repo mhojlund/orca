@@ -14,6 +14,7 @@ export type CmdJTask =
   | { provider: 'jira'; issue: JiraIssue }
   | { provider: 'github'; issue: GitHubWorkItem }
   | { provider: 'gitlab'; issue: GitLabWorkItem }
+  | { provider: 'gitea'; issue: GitHubWorkItem }
 
 export type CmdJTaskSearchResult = {
   id: string

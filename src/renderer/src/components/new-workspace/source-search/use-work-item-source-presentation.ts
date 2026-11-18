@@ -52,6 +52,8 @@ export function useWorkItemSourcePresentation(
     setCommandValue,
     githubLoading,
     gitlabLoading,
+    giteaItems,
+    giteaLoading,
     branchesLoading,
     linearLoading,
     jiraLoading,
@@ -112,6 +114,11 @@ export function useWorkItemSourcePresentation(
         value,
         debouncedQuery
       }),
+      giteaItems: getVisibleHeldProviderResults({
+        items: giteaItems,
+        value,
+        debouncedQuery
+      }),
       jiraIntent: jiraSource.intent,
       jiraIssue: jiraSource.issue,
       jiraIssues: getVisibleHeldProviderResults({
@@ -148,6 +155,7 @@ export function useWorkItemSourcePresentation(
     gitlabSourceAvailable,
     gitlabItems,
     gitlabUrlIntent,
+    giteaItems,
     jiraSource.accountChoices,
     jiraSource.intent,
     jiraSource.issue,
@@ -238,7 +246,12 @@ export function useWorkItemSourcePresentation(
     linearLoading && (!linearUrlIntentOwnsInput || showLinearUrlLoadingFeedback)
   const loading = jiraSource.intent
     ? jiraSource.loading
-    : githubLoading || gitlabLoading || branchesLoading || visibleLinearLoading || jiraLoading
+    : githubLoading ||
+      gitlabLoading ||
+      giteaLoading ||
+      branchesLoading ||
+      visibleLinearLoading ||
+      jiraLoading
   // Why: only spin on first load, not refreshes with retained rows.
   const showSearchSpinner = loading && searchResultRows.length === 0
   const ActiveInputIcon =
