@@ -30,7 +30,7 @@ export type GitLabWorkspaceSource = WorkspaceSourceLinkedItem & {
 
 export type GiteaWorkspaceSource = WorkspaceSourceLinkedItem & {
   provider: 'gitea'
-  type: 'issue'
+  type: 'issue' | 'pr'
 }
 
 export type LinearWorkspaceSource = WorkspaceSourceLinkedItem & {
@@ -115,7 +115,7 @@ export function buildGitHubWorkspaceSource(item: {
 }
 
 export function buildGiteaWorkspaceSource(item: {
-  type: 'issue'
+  type: 'issue' | 'pr'
   number: number
   title: string
   url: string

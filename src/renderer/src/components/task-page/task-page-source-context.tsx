@@ -61,7 +61,7 @@ export function getGitHubWorkItemWorkspaceSeed(item: GitHubWorkItem): string {
 export function getGiteaWorkItemWorkspaceSeed(item: GitHubWorkItem): string {
   return (
     getLinkedWorkItemWorkspaceName({
-      type: 'issue',
+      type: item.type,
       provider: 'gitea',
       number: item.number,
       title: item.title

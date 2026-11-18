@@ -3325,7 +3325,8 @@
         "dropPartiallyAttached_one": "{{failureCount}} of {{count}} item could not be attached.",
         "dropPartiallyAttached_other": "{{failureCount}} of {{count}} items could not be attached.",
         "dropPartiallyAttached": "{{failureCount}} of {{count}} items could not be attached.",
-        "folderSetupSupportCheckFailed": "Couldn't confirm whether this host runs folder setup scripts. Try again."
+        "folderSetupSupportCheckFailed": "Couldn't confirm whether this host runs folder setup scripts. Try again.",
+        "giteaPrBaseFailed": "Failed to resolve PR base."
       },
       "useGlobalFileDrop": {
         "38c9f034ff": "Failed to upload dropped files.",
@@ -4540,7 +4541,6 @@
         "giteaInvolvementEveryone": "Everyone",
         "giteaInvolvementAssigned": "Assigned to me",
         "giteaInvolvementCreated": "Created by me",
-        "giteaRefresh": "Refresh Gitea issues",
         "giteaState": "State",
         "giteaConnect": "Connect Gitea/Forgejo",
         "giteaEmptyTitle": "No Gitea issues",
@@ -4548,7 +4548,11 @@
         "giteaOpenInBrowser": "Open in Gitea",
         "giteaLoadFailed": "Could not load Gitea issues. Refresh to try again.",
         "giteaSourceLabel": "Gitea",
-        "giteaClose": "Close"
+        "giteaClose": "Close",
+        "giteaRefreshItems": "Refresh Gitea list",
+        "giteaEmptyPrsTitle": "No Gitea pull requests",
+        "giteaEmptyPrsDescription": "No Gitea or Forgejo pull requests match this filter.",
+        "giteaStartFromPr": "Start workspace from PR {{number}}"
       },
       "Terminal": {
         "73768427cf": "Close",
@@ -27446,6 +27450,12 @@
         "mrNotFound": "MR !{{number}} not found.",
         "mrSourceBranchMissing": "MR !{{number}} has no source branch.",
         "forkHeadUnresolved": "Could not resolve fork MR !{{number}} head after fetch."
+      },
+      "gitea": {
+        "remoteNotFound": "No Gitea or Forgejo remote found for this repository.",
+        "prNotFound": "PR #{{number}} not found.",
+        "prHeadBranchMissing": "PR #{{number}} has no head branch.",
+        "forkHeadUnresolved": "Could not resolve PR #{{number}} head after fetch."
       }
     },
     "bitbucketConnect": {

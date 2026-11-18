@@ -16,13 +16,16 @@ import type { Repo } from '../../../../../shared/repository/repo-types'
 import { giteaIssueQuery } from './gitea-task-filters'
 
 const GITEA_TASK_FETCH_CONCURRENCY = 6
-const GITEA_PAGE_LIMIT = 50
+const GITEA_ISSUE_PAGE_LIMIT = 50
+// Each PR row costs a detail request, so PR pages stay smaller.
+const GITEA_PR_PAGE_LIMIT = 25
 
 type GiteaLoadingInput = Pick<
   TaskPageProviderMetadataModel,
   | 'selectedRepos'
   | 'selectedReposKey'
   | 'taskSource'
+  | 'giteaKind'
   | 'giteaState'
   | 'giteaInvolvement'
   | 'giteaItems'
@@ -40,7 +43,8 @@ type GiteaLoadingInput = Pick<
 
 async function listRepoIssues(
   repo: Repo,
-  query: string
+  query: string,
+  limit: number
 ): Promise<{ items: GitHubWorkItem[]; authRequired: boolean; error: string | null }> {
   const sourceContext = getTaskPageRepoSourceContext(repo, 'gitea')
   const state = useAppStore.getState()
@@ -51,7 +55,7 @@ async function listRepoIssues(
     repo.path,
     sourceContext
   )
-  const result = await listGitHubWorkItemsForRepo(context, { limit: GITEA_PAGE_LIMIT, query })
+  const result = await listGitHubWorkItemsForRepo(context, { limit, query })
   // Non-Gitea repos in a mixed selection are skipped rather than reported as failures.
   if (result.sources.ineligible) {
     return { items: [], authRequired: false, error: null }
@@ -70,6 +74,7 @@ export function useTaskPageGiteaLoading<Model extends GiteaLoadingInput>(model: 
     selectedRepos,
     selectedReposKey,
     taskSource,
+    giteaKind,
     giteaState,
     giteaInvolvement,
     giteaRefreshNonce,
@@ -80,7 +85,7 @@ export function useTaskPageGiteaLoading<Model extends GiteaLoadingInput>(model: 
     setGiteaError,
     setGiteaAuthRequired
   } = model
-  const queryKey = JSON.stringify([giteaState, giteaInvolvement, selectedReposKey])
+  const queryKey = JSON.stringify([giteaKind, giteaState, giteaInvolvement, selectedReposKey])
 
   useEffect(() => {
     if (taskSource !== 'gitea') {
@@ -90,12 +95,13 @@ export function useTaskPageGiteaLoading<Model extends GiteaLoadingInput>(model: 
     setGiteaLoading(true)
     setGiteaError(null)
     setGiteaAuthRequired(false)
-    const query = giteaIssueQuery(giteaState, giteaInvolvement)
+    const query = giteaIssueQuery(giteaKind, giteaState, giteaInvolvement)
+    const limit = giteaKind === 'prs' ? GITEA_PR_PAGE_LIMIT : GITEA_ISSUE_PAGE_LIMIT
     void mapSettledWithConcurrency(selectedRepos, GITEA_TASK_FETCH_CONCURRENCY, (repo) =>
       // Why: a stale selection's results are discarded below, so skip repos not yet started.
       stale
         ? Promise.resolve({ items: [], authRequired: false, error: null })
-        : listRepoIssues(repo, query)
+        : listRepoIssues(repo, query, limit)
     )
       .then((results) => {
         if (stale) {
@@ -141,6 +147,7 @@ export function useTaskPageGiteaLoading<Model extends GiteaLoadingInput>(model: 
   }, [
     taskSource,
     selectedRepos,
+    giteaKind,
     giteaState,
     giteaInvolvement,
     giteaRefreshNonce,
