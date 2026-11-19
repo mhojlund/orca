@@ -11,7 +11,6 @@ export function useTaskPageResumeRestoration(model: TaskPageJiraListStateModel) 
     persistedUIReady,
     taskResumeState,
     setTaskResumeState,
-    pageData,
     fetchLinearProject,
     listLinearCustomViews,
     fetchLinearCustomView,
@@ -95,7 +94,7 @@ export function useTaskPageResumeRestoration(model: TaskPageJiraListStateModel) 
   }, [
     persistedUIReady,
     settings,
-    pageData.taskSource,
+    preferredTaskSource,
     resolvedInitialSelection,
     taskResumeState,
     visibleTaskProviders,
