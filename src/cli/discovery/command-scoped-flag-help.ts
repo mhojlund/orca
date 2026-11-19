@@ -75,7 +75,8 @@ const COMMAND_SCOPED_FLAG_HELP: Record<string, Record<string, string>> = {
     'reference-site': '--reference-site <id> Jira site for bare keys; see orca jira connection',
     pr: '--pr <number>          Linked GitHub pull request number',
     'gitlab-issue': '--gitlab-issue <number|url> Linked GitLab issue in the source project',
-    'gitlab-mr': '--gitlab-mr <number|url> Linked GitLab merge request in the source project'
+    'gitlab-mr': '--gitlab-mr <number|url> Linked GitLab merge request in the source project',
+    'gitea-issue': '--gitea-issue <number|url> Linked Gitea/Forgejo issue in the source repository'
   },
   'skills get': {
     full: '--full                 Print the full guide with bundled references',
