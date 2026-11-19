@@ -22,6 +22,7 @@ import {
 
 import { translate } from '../../i18n/mobile-i18n'
 import { EMPTY_GITHUB_PROJECT_SETTINGS } from '../task-list/mobile-tasks-options'
+import { filterMobileSupportedTaskProviders } from './mobile-task-provider-support'
 
 export function useMobileTasksRuntimeHydration(model: ClientSettingsActionsModel) {
   const {
@@ -106,7 +107,9 @@ export function useMobileTasksRuntimeHydration(model: ClientSettingsActionsModel
     const resume = hydration.ui?.taskResumeState ?? {}
     setGithubProjectHiddenFieldIdsByView(resume.githubProjectHiddenFieldIdsByView ?? {})
 
-    const preferredProviders = normalizeVisibleTaskProviders(settings.visibleTaskProviders)
+    const preferredProviders = filterMobileSupportedTaskProviders(
+      normalizeVisibleTaskProviders(settings.visibleTaskProviders)
+    )
     const linearIsConnected = hydration.linearConnected
     const availableProviders = filterAvailableTaskProviders(preferredProviders, {
       gitlabInstalled: hydration.glabInstalled,

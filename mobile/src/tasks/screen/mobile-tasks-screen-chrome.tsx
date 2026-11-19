@@ -18,6 +18,7 @@ function refreshLabels(t: Translate) {
   return {
     github: t('tasks.screenChrome.refreshGitHub', 'Refresh GitHub work'),
     gitlab: t('tasks.screenChrome.refreshGitLab', 'Refresh GitLab work items'),
+    gitea: t('tasks.screenChrome.refreshGitea', 'Refresh Gitea work'),
     linear: t('tasks.screenChrome.refreshLinear', 'Refresh Linear'),
     jira: t('tasks.screenChrome.refreshJira', 'Refresh Jira issues')
   }
