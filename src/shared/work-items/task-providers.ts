@@ -124,3 +124,16 @@ export function resolveVisibleTaskProvider(
   }
   return visibleProviders[0] ?? 'github'
 }
+
+/** Falls back from an unconfigured GitHub default to the first configured visible provider. */
+export function resolveConfiguredDefaultTaskProvider(
+  preferred: TaskProvider | null | undefined,
+  visibleProviders: readonly TaskProvider[],
+  configured: ReadonlySet<TaskProvider> | null
+): TaskProvider {
+  const resolved = resolveVisibleTaskProvider(preferred, visibleProviders)
+  if (resolved !== 'github' || !configured || configured.has('github')) {
+    return resolved
+  }
+  return TASK_PROVIDERS.find((p) => visibleProviders.includes(p) && configured.has(p)) ?? resolved
+}
