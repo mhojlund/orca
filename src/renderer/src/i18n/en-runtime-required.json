@@ -2440,6 +2440,14 @@
       "networkError": "Network error — check your connection.",
       "titleRequired": "Title is required"
     },
+    "giteaConnect": {
+      "invalidInput": "Invalid Gitea/Forgejo credentials",
+      "invalidUrl": "Enter a valid http(s) instance URL.",
+      "notGitea": "This URL does not look like a Gitea or Forgejo instance.",
+      "rejected": "The instance rejected this token. Check the token and its scopes, then try again.",
+      "tokenRequired": "Enter a personal access token.",
+      "unreachable": "Could not reach the instance. Check your connection and the URL, then try again."
+    },
     "startPoint": {
       "fetchFailed": "Failed to fetch {{ref}}: {{detail}}",
       "folderUnsupported": "Folder mode does not support creating worktrees.",
