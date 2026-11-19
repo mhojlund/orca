@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { CaseSensitive, LoaderCircle, Search } from 'lucide-react'
 import { parseGitHubIssueOrPRLink } from '../../../../../shared/github/repositories/links'
+import { parseGiteaIssueOrPRLink } from '../../../../../shared/gitea/gitea-links'
+import { useGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { parseGitLabIssueOrMRLink } from '../../../../../shared/new-workspace/gitlab-links'
 import {
   isSmartWorkspaceLinearIssueIntentMatch,
@@ -72,12 +74,22 @@ export function useWorkItemSourcePresentation(
     settledLinearUrlQuery === linearQuery.trim() &&
     !linearLoading &&
     linearIssues.length === 0
+  const giteaHosts = useGiteaInstanceHosts()
+  const giteaUrlIntent = useMemo(
+    () =>
+      isSmartWorkspaceSourceQueryWithinLimit(value) && (mode === 'smart' || mode === 'gitea')
+        ? parseGiteaIssueOrPRLink(value, giteaHosts)
+        : null,
+    [giteaHosts, mode, value]
+  )
   const githubUrlIntent = useMemo(
     () =>
-      isSmartWorkspaceSourceQueryWithinLimit(value) && (mode === 'smart' || mode === 'github')
+      isSmartWorkspaceSourceQueryWithinLimit(value) &&
+      (mode === 'smart' || mode === 'github') &&
+      !parseGiteaIssueOrPRLink(value, giteaHosts)
         ? parseGitHubIssueOrPRLink(value)
         : null,
-    [mode, value]
+    [giteaHosts, mode, value]
   )
   const gitlabUrlIntent = useMemo(
     () =>
@@ -119,6 +131,7 @@ export function useWorkItemSourcePresentation(
         value,
         debouncedQuery
       }),
+      giteaUrlIntent,
       jiraIntent: jiraSource.intent,
       jiraIssue: jiraSource.issue,
       jiraIssues: getVisibleHeldProviderResults({
@@ -156,6 +169,7 @@ export function useWorkItemSourcePresentation(
     gitlabItems,
     gitlabUrlIntent,
     giteaItems,
+    giteaUrlIntent,
     jiraSource.accountChoices,
     jiraSource.intent,
     jiraSource.issue,
@@ -184,7 +198,7 @@ export function useWorkItemSourcePresentation(
   const isQueryStale =
     !linearUrlIntentOwnsInput && trimmedValue.length > 0 && trimmedDebouncedQuery !== trimmedValue
   // Why: unambiguous refs highlight their source row instead of the typed-text fallback.
-  const sourceIntent = useMemo<'github' | 'gitlab' | 'linear' | 'jira' | null>(() => {
+  const sourceIntent = useMemo<'github' | 'gitlab' | 'gitea' | 'linear' | 'jira' | null>(() => {
     if (!isSmartWorkspaceSourceQueryWithinLimit(value)) {
       return null
     }
@@ -194,6 +208,9 @@ export function useWorkItemSourcePresentation(
     }
     if (jiraSource.intent) {
       return 'jira'
+    }
+    if (parseGiteaIssueOrPRLink(trimmed, giteaHosts) !== null) {
+      return 'gitea'
     }
     if (/^#\d+$/.test(trimmed) || parseGitHubIssueOrPRLink(trimmed) !== null) {
       return 'github'
@@ -214,7 +231,7 @@ export function useWorkItemSourcePresentation(
       }
     }
     return null
-  }, [jiraSource.intent, linearAvailable, rows, value])
+  }, [giteaHosts, jiraSource.intent, linearAvailable, rows, value])
   // Why: a slow host status read must not let Enter accept a pasted Linear URL as plain text.
   const unresolvedLinearUrlIntent =
     linearUrlIntentOwnsInput &&
