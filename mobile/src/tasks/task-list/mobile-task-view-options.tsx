@@ -7,6 +7,7 @@ import { JIRA_FILTER_LABELS } from '../providers/jira/mobile-jira-issue-filters'
 export const PROVIDER_LABELS: Record<TaskProvider, string> = {
   github: 'GitHub',
   gitlab: 'GitLab',
+  gitea: 'Gitea',
   linear: 'Linear',
   jira: 'Jira'
 }
@@ -17,6 +18,9 @@ export const PROVIDER_EMPTY_LABELS: Record<TaskProvider, string> = {
   },
   get gitlab() {
     return translate('tasks.taskViewOptions.noGitLabTasks', 'No GitLab tasks')
+  },
+  get gitea() {
+    return translate('tasks.taskViewOptions.noGiteaTasks', 'No Gitea tasks')
   },
   get linear() {
     return translate('tasks.taskViewOptions.noLinearTasks', 'No Linear tasks')

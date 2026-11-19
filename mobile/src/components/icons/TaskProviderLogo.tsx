@@ -1,6 +1,6 @@
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Circle, Line, Path } from 'react-native-svg'
 
-export type TaskProviderLogoKind = 'github' | 'gitlab' | 'linear' | 'jira'
+export type TaskProviderLogoKind = 'github' | 'gitlab' | 'gitea' | 'linear' | 'jira'
 
 type Props = {
   provider: TaskProviderLogoKind
@@ -42,6 +42,27 @@ export function TaskProviderLogo({ provider, size = 16, color }: Props) {
       >
         {/* Why: lucide-react-native omits deprecated brand icons; keep parity with desktop lucide paths. */}
         <Path d="m22 13.29-3.33-10a.42.42 0 0 0-.14-.18.38.38 0 0 0-.22-.11.39.39 0 0 0-.23.07.42.42 0 0 0-.14.18l-2.26 6.67H8.32L6.1 3.26A.42.42 0 0 0 6 3.08.38.38 0 0 0 5.74 3a.39.39 0 0 0-.23.07.42.42 0 0 0-.14.18L2 13.29a.74.74 0 0 0 .27.83L12 21l9.69-6.88a.71.71 0 0 0 .31-.83Z" />
+      </Svg>
+    )
+  }
+
+  if (provider === 'gitea') {
+    return (
+      <Svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {/* Why: matches the desktop sidebar's lucide git-branch mark for Gitea/Forgejo. */}
+        <Line x1={6} x2={6} y1={3} y2={15} />
+        <Circle cx={18} cy={6} r={3} />
+        <Circle cx={6} cy={18} r={3} />
+        <Path d="M18 9a9 9 0 0 1-9 9" />
       </Svg>
     )
   }
