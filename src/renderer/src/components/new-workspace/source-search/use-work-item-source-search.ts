@@ -9,6 +9,8 @@ import {
   type NormalizedWorkItemSourceSearchProps,
   type WorkItemSourceSearchProps
 } from '../name-field/smart-workspace-name-field-model'
+import { parseGiteaIssueOrPRLink } from '../../../../../shared/gitea/gitea-links'
+import { useGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { useWorkItemSourceFoundation } from './use-work-item-source-foundation'
 import { useSmartWorkspaceGithubSearch } from './use-smart-workspace-github-search'
 import { useSmartWorkspaceGitlabSearch } from './use-smart-workspace-gitlab-search'
@@ -67,8 +69,17 @@ export function useWorkItemSourceSearch({
     const timer = window.setTimeout(() => setLinearUrlLoadingFeedbackQuery(linearQuery), 200)
     return () => window.clearTimeout(timer)
   }, [linearLoading, setLinearUrlLoadingFeedbackQuery, linearQuery, linearUrlIntentOwnsInput])
+  const giteaHosts = useGiteaInstanceHosts()
+  const giteaLink = useMemo(
+    () =>
+      sourceQueryWithinLimit
+        ? parseGiteaIssueOrPRLink(foundation.debouncedQuery, giteaHosts)
+        : null,
+    [foundation.debouncedQuery, giteaHosts, sourceQueryWithinLimit]
+  )
   const shouldQueryGithub =
     sourceQueryWithinLimit &&
+    giteaLink === null &&
     !repoBackedSourcesDisabled &&
     !foundation.jiraSource.intent &&
     !linearUrlIntentOwnsInput &&
@@ -129,7 +140,8 @@ export function useWorkItemSourceSearch({
       !repoBackedSourcesDisabled &&
       !textOnly &&
       foundation.giteaEnabled === true &&
-      foundation.mode === 'gitea'
+      (foundation.mode === 'gitea' || (giteaLink !== null && foundation.mode === 'smart')),
+    giteaLink
   })
   const presentation = useWorkItemSourcePresentation(foundation, {
     linearUrlIntent,

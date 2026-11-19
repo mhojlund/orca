@@ -16,6 +16,7 @@ import { preventOutsideDismissWhenDirty } from '@/lib/overlay-interaction/outsid
 import { giteaConnectErrorText } from '@/lib/source-control/remote/gitea-connect-error-copy'
 import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
 import { useTranslate } from '@/i18n/use-translate'
+import { refreshGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 
 type ConnectState = 'idle' | 'connecting' | 'error'
 
@@ -113,6 +114,7 @@ export function GiteaInstanceDialog({
         setToken('')
         setConnectState('idle')
         onOpenChange(false)
+        void refreshGiteaInstanceHosts()
         onConnected?.()
         return
       }

@@ -13,6 +13,8 @@ import {
   getWorkspaceAttachmentKey,
   getWorkspaceAttachmentUrlScope
 } from '../../../../../../shared/workspace-attachments/workspace-attachment-normalization'
+import { parseGiteaIssueOrPRLink } from '../../../../../../shared/gitea/gitea-links'
+import { getGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { parseGitHubIssueOrPRLink } from '../../../../../../shared/github/repositories/links'
 import { parseGitLabIssueOrMRLink } from '../../../../../../shared/new-workspace/gitlab-links'
 import { parseLinearIssueInput } from '../../../../../../shared/linear/links'
@@ -81,7 +83,8 @@ export function workspaceAttachmentLabel(item: WorkspaceAttachment): string {
 
 export function parseWorkspaceAttachmentInput(
   input: string,
-  kind: AttachmentInputKind
+  kind: AttachmentInputKind,
+  giteaHosts: ReadonlySet<string> = getGiteaInstanceHosts()
 ): WorkspaceAttachment | null {
   const value = input.trim()
   if (!value || isWorkItemLinkQueryTooLarge(value)) {
@@ -95,6 +98,10 @@ export function parseWorkspaceAttachmentInput(
     const otherReview = parseOtherReviewUrl(value)
     if (otherReview) {
       return otherReview
+    }
+    const gitea = parseGiteaIssueOrPRLink(value, giteaHosts)
+    if (gitea) {
+      return { provider: 'gitea', type: gitea.type, number: gitea.number, url: value }
     }
     if (github) {
       return { provider: 'github', type: github.type, number: github.number, url: value }

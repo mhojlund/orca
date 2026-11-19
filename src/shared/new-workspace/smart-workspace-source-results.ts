@@ -1,3 +1,4 @@
+import type { GiteaIssueOrPRLink } from '../gitea/gitea-links'
 import type { SmartNameMode, SmartWorkspaceSourceRow } from './smart-workspace-source-row-types'
 import type { GitHubWorkItem } from '../github/work-items/work-item-types'
 import type { GitLabWorkItem } from '../gitlab/gitlab-types'
@@ -186,6 +187,10 @@ export function shouldHoldSourceResultsForQuery({
   return Math.abs(currentQueryKey.length - resultQueryKey.length) <= SOURCE_RESULT_HOLD_MAX_DELTA
 }
 
+function toGiteaSourceRow(item: GitHubWorkItem): SmartWorkspaceSourceRow {
+  return { kind: 'gitea', value: `gitea-${item.repoId}-${item.number}`, item }
+}
+
 export function buildSmartWorkspaceSourceRows({
   branches,
   githubItems,
@@ -194,6 +199,7 @@ export function buildSmartWorkspaceSourceRows({
   gitlabItems,
   gitlabUrlIntent,
   giteaItems = [],
+  giteaUrlIntent = null,
   jiraIntent = false,
   jiraIssue,
   jiraIssues = [],
@@ -211,6 +217,7 @@ export function buildSmartWorkspaceSourceRows({
   gitlabItems: GitLabWorkItem[]
   gitlabUrlIntent?: SmartWorkspaceGitLabUrlIntent | null
   giteaItems?: GitHubWorkItem[]
+  giteaUrlIntent?: GiteaIssueOrPRLink | null
   jiraIntent?: boolean
   jiraIssue?: JiraIssue | null
   jiraIssues?: JiraIssue[]
@@ -227,6 +234,10 @@ export function buildSmartWorkspaceSourceRows({
   }
   if (!isSmartWorkspaceSourceQueryWithinLimit(value)) {
     return []
+  }
+  // Why: a pasted Gitea link resolves to one item, so other sources are noise once it is found.
+  if (giteaUrlIntent && giteaItems.length > 0 && (mode === 'smart' || mode === 'gitea')) {
+    return giteaItems.slice(0, resultLimit).map(toGiteaSourceRow)
   }
   const resolvedLinearIssues = Array.isArray(linearIssues)
     ? linearIssues
@@ -272,13 +283,7 @@ export function buildSmartWorkspaceSourceRows({
     )
   }
   if (mode === 'gitea') {
-    nextRows.push(
-      ...giteaItems.map((item) => ({
-        kind: 'gitea' as const,
-        value: `gitea-${item.repoId}-${item.number}`,
-        item
-      }))
-    )
+    nextRows.push(...giteaItems.map(toGiteaSourceRow))
   }
   const shouldShowBranches = mode === 'branches' || (mode === 'smart' && trimmed.length > 0)
   if (shouldShowBranches) {

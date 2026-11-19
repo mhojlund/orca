@@ -16,6 +16,7 @@ import {
 import { useIntegrationSubordinateRowClass } from '../presentation/integration-card-presentation'
 import { usePreflightCardStatuses } from './source-control-preflight-card-status'
 import { tokenProviderStatusLabel } from './token-source-control-status'
+import { refreshGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { GiteaInstanceDialog } from './gitea-instance-dialog'
 import { useTranslate } from '@/i18n/use-translate'
 
@@ -72,6 +73,7 @@ export function GiteaIntegrationCard(): React.JSX.Element {
     setRemoveError(null)
     try {
       await window.api.gitea.instances.disconnect(instance.id)
+      void refreshGiteaInstanceHosts()
     } catch (error) {
       if (mountedRef.current) {
         setRemoveError(

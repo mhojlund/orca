@@ -16,12 +16,13 @@ export function matchesGitHubWorkItemTarget(
     return false
   }
   try {
+    // Why: Gitea/Forgejo serve pull requests under /pulls/ rather than GitHub's /pull/.
     const url = new URL(item.url)
     const parts = url.pathname.split('/').filter(Boolean)
     if (
       !['http:', 'https:'].includes(url.protocol) ||
       parts.length !== 4 ||
-      parts[2] !== (target.type === 'pr' ? 'pull' : 'issues') ||
+      !(target.type === 'pr' ? ['pull', 'pulls'] : ['issues']).includes(parts[2]) ||
       parts[3] !== String(target.number)
     ) {
       return false

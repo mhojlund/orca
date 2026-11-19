@@ -6,6 +6,7 @@ import {
   type PaletteFilterState
 } from '@/components/cmd-j/palette-filter'
 import { useAppStore } from '@/store/index'
+import { useGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { parseCmdJTaskSourceUrl } from '@/lib/workspace/search/worktrees/worktree-palette-task-url-match'
 import { getWorktreePaletteCreateActionState } from '@/lib/workspace/search/worktrees/worktree-palette-create-action'
 import type { CmdJActiveGroupSnapshot } from '@/components/cmd-j/quick-action-context'
@@ -38,9 +39,10 @@ export function useWorktreeJumpPaletteLocalState({
   // react-doctor-disable-next-line react-doctor/no-ref-current-in-render
   liveQueryRef.current = query
   // Showing only bots, a link is searched as a bot name; the recovery row hands it back.
+  const giteaHosts = useGiteaInstanceHosts()
   const taskSourceUrl = useMemo(
-    () => (scoped ? null : parseCmdJTaskSourceUrl(query)),
-    [query, scoped]
+    () => (scoped ? null : parseCmdJTaskSourceUrl(query, giteaHosts)),
+    [giteaHosts, query, scoped]
   )
   const paletteSearchQuery = taskSourceUrl ? query.trim() : deferredQuery.trim()
   const deferredCreateAction = useMemo(
