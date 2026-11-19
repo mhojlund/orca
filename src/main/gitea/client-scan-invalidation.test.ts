@@ -133,12 +133,11 @@ describe('Gitea scan invalidation after creation', () => {
     if (!repo) {
       throw new Error('Expected test repository')
     }
-    invalidateGiteaPullRequestScanForRepo(repo)
+    await invalidateGiteaPullRequestScanForRepo(repo)
     const fresh = getGiteaPullRequestForBranchOrThrow('/repo', branch)
     const concurrent = getGiteaPullRequestForBranchOrThrow('/repo', branch)
     try {
-      await new Promise<void>((resolve) => setImmediate(resolve))
-      expect(fetchMock).toHaveBeenCalledTimes(2)
+      await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
       freshResponse.resolve(Response.json([pullRequest]))
       expect(await fresh).toMatchObject({ number: 7 })
       expect(await concurrent).toMatchObject({ number: 7 })
