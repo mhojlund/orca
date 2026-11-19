@@ -59,6 +59,11 @@ import {
 } from './worktree-setup-decision-recovery'
 import { assertGitLabLinkFlagProjectsMatch } from './worktree-gitlab-link-context'
 import {
+  buildGiteaIssueSetFields,
+  getOptionalGiteaIssueFlag,
+  mergeGiteaIssueIntoLinkedItems
+} from './worktree-gitea-link'
+import {
   assertReferenceWritesSupported,
   getCreateReferenceInputs,
   resolveReferenceInputs
@@ -153,9 +158,11 @@ export const WORKTREE_HANDLERS: Record<string, CommandHandler> = {
       ? { repo: `id:${cwdContext.repoId}` }
       : await getCreateRepoTarget(flags, undefined, client, explicitParentWorkspace)
     await assertGitLabLinkFlagProjectsMatch(flags, client, repoTarget)
-    const linkedItems = referenceInputs
-      ? await resolveReferenceInputs(context, referenceInputs)
-      : undefined
+    const giteaIssue = getOptionalGiteaIssueFlag(flags)
+    const linkedItems = mergeGiteaIssueIntoLinkedItems(
+      referenceInputs ? await resolveReferenceInputs(context, referenceInputs) : undefined,
+      giteaIssue
+    )
     if (linkedItems) {
       await assertReferenceWritesSupported(client)
     }
@@ -215,6 +222,7 @@ export const WORKTREE_HANDLERS: Record<string, CommandHandler> = {
     const linearIssueLink = getOptionalLinearIssueLinkFlag(flags, 'linear-issue', {
       allowNull: true
     })
+    const giteaIssue = getOptionalGiteaIssueFlag(flags, { allowNull: true })
     const worktree = await getRequiredWorktreeSelector(flags, 'worktree', cwd, client)
     if (await setIfFolderWorkspace(client, flags, worktree, json)) {
       return
@@ -226,6 +234,9 @@ export const WORKTREE_HANDLERS: Record<string, CommandHandler> = {
       displayName: getOptionalStringFlag(flags, 'display-name'),
       ...reviewLinks,
       ...linearIssueLink,
+      ...(giteaIssue === undefined
+        ? {}
+        : await buildGiteaIssueSetFields(client, worktree, giteaIssue)),
       // An explicit empty value clears the stored comment.
       comment: getOptionalStringFlagAllowingEmpty(flags, 'comment'),
       workspaceStatus: getOptionalStringFlag(flags, 'workspace-status'),

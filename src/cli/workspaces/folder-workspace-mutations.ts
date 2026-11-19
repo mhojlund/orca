@@ -28,7 +28,14 @@ import { getWorktreeReadFlags } from './worktree-unread-flag'
 
 type Flags = Map<string, string | boolean>
 
-const LINK_FLAGS = ['issue', 'pr', 'linear-issue', 'gitlab-issue', 'gitlab-mr'] as const
+const LINK_FLAGS = [
+  'issue',
+  'pr',
+  'linear-issue',
+  'gitlab-issue',
+  'gitlab-mr',
+  'gitea-issue'
+] as const
 
 /** Refuses, before any request, a flag that has no folder workspace meaning. */
 function refuseFolderFlags(flags: Flags, refusals: readonly [string, string][]): void {
