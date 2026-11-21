@@ -11,7 +11,6 @@ export function useTaskPageResumeRestoration(model: TaskPageJiraListStateModel) 
     persistedUIReady,
     taskResumeState,
     setTaskResumeState,
-    pageData,
     fetchLinearProject,
     listLinearCustomViews,
     fetchLinearCustomView,
@@ -48,18 +47,14 @@ export function useTaskPageResumeRestoration(model: TaskPageJiraListStateModel) 
     linearContextResumeAttemptedRef,
     setJiraSearchInput,
     setAppliedJiraSearch,
-    setActiveJiraPreset
+    setActiveJiraPreset,
+    preferredTaskSource
   } = model
   useEffect(() => {
     if (taskResumeAppliedRef.current || !persistedUIReady || !settings) {
       return
     }
-    setTaskSource(
-      resolveVisibleTaskProvider(
-        pageData.taskSource ?? settings.defaultTaskSource,
-        visibleTaskProviders
-      )
-    )
+    setTaskSource(resolveVisibleTaskProvider(preferredTaskSource, visibleTaskProviders))
     setRepoSelection(resolvedInitialSelection)
     const nextGithubMode = taskResumeState?.githubMode ?? 'items'
     setGithubMode(nextGithubMode)
@@ -99,7 +94,7 @@ export function useTaskPageResumeRestoration(model: TaskPageJiraListStateModel) 
   }, [
     persistedUIReady,
     settings,
-    pageData.taskSource,
+    preferredTaskSource,
     resolvedInitialSelection,
     taskResumeState,
     visibleTaskProviders,

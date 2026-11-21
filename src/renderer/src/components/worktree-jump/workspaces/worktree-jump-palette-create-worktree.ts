@@ -2,10 +2,7 @@ import { isWorktreeRetiredByRemoval } from '../../../../../shared/worktree/remov
 import { worktreeMatchesGitHubNumber } from '@/lib/work-items/github/github-work-item-workspace-attachment'
 import { getPaletteWorktreeExecutionHostId } from '@/lib/workspace/search/palette-repo-resolution'
 import { findRepoForHost } from '@/store/repos/repo-host-identity'
-import {
-  parseGitHubIssueOrPRLink,
-  parseGitHubIssueOrPRNumber
-} from '../../../../../shared/github/repositories/links'
+import { parseGitHubIssueOrPRNumber } from '../../../../../shared/github/repositories/links'
 import {
   getLinkedWorkItemSuggestedName,
   getLinkedWorkItemWorkspaceName
@@ -57,7 +54,8 @@ export function createWorktreeJumpPaletteWorktreeHandler({
     ) {
       return
     }
-    const ghLink = parseGitHubIssueOrPRLink(trimmed)
+    // Why: a connected Gitea host's /issues/ URL also parses as GitHub; only the classified provider owns it.
+    const ghLink = taskSourceUrl?.provider === 'github' ? taskSourceUrl.link : null
     const ghNumber = parseGitHubIssueOrPRNumber(trimmed)
     const openComposer = (data: Record<string, unknown>): void => {
       skipRestoreFocusRef.current = true

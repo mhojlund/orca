@@ -75,6 +75,11 @@ export function getSmartWorkspaceNameModes(
       Icon: Gitlab
     },
     {
+      id: 'gitea',
+      label: t('auto.components.new.workspace.SmartWorkspaceNameField.giteaMode', 'Gitea'),
+      Icon: GitBranch
+    },
+    {
       id: 'branches',
       label: t('auto.components.new.workspace.SmartWorkspaceNameField.2e4c7c95fe', 'Branch'),
       Icon: GitBranch

@@ -13,6 +13,8 @@ import {
   getWorkspaceAttachmentKey,
   getWorkspaceAttachmentUrlScope
 } from '../../../../../../shared/workspace-attachments/workspace-attachment-normalization'
+import { parseGiteaIssueOrPRLink } from '../../../../../../shared/gitea/gitea-links'
+import { getGiteaInstanceHosts } from '@/lib/work-items/gitea/gitea-instance-hosts'
 import { parseGitHubIssueOrPRLink } from '../../../../../../shared/github/repositories/links'
 import { parseGitLabIssueOrMRLink } from '../../../../../../shared/new-workspace/gitlab-links'
 import { parseLinearIssueInput } from '../../../../../../shared/linear/links'
@@ -46,7 +48,11 @@ export const ATTACHMENT_INPUT_KINDS = [
     value: 'azure-devops-pr',
     label: () => translate('workspace.links.kind.azure_devops_pr', 'Azure DevOps PR')
   },
-  { value: 'gitea-pr', label: () => translate('workspace.links.kind.gitea_pr', 'Gitea PR') }
+  { value: 'gitea-pr', label: () => translate('workspace.links.kind.gitea_pr', 'Gitea PR') },
+  {
+    value: 'gitea-issue',
+    label: () => translate('workspace.links.kind.gitea_issue', 'Gitea issue')
+  }
 ] as const
 export type AttachmentInputKind = (typeof ATTACHMENT_INPUT_KINDS)[number]['value']
 
@@ -77,7 +83,8 @@ export function workspaceAttachmentLabel(item: WorkspaceAttachment): string {
 
 export function parseWorkspaceAttachmentInput(
   input: string,
-  kind: AttachmentInputKind
+  kind: AttachmentInputKind,
+  giteaHosts: ReadonlySet<string> = getGiteaInstanceHosts()
 ): WorkspaceAttachment | null {
   const value = input.trim()
   if (!value || isWorkItemLinkQueryTooLarge(value)) {
@@ -91,6 +98,10 @@ export function parseWorkspaceAttachmentInput(
     const otherReview = parseOtherReviewUrl(value)
     if (otherReview) {
       return otherReview
+    }
+    const gitea = parseGiteaIssueOrPRLink(value, giteaHosts)
+    if (gitea) {
+      return { provider: 'gitea', type: gitea.type, number: gitea.number, url: value }
     }
     if (github) {
       return { provider: 'github', type: github.type, number: github.number, url: value }
@@ -141,6 +152,9 @@ export function parseWorkspaceAttachmentInput(
   }
   if (kind === 'gitlab-mr' || kind === 'gitlab-issue') {
     return { provider: 'gitlab', type: kind === 'gitlab-mr' ? 'mr' : 'issue', number }
+  }
+  if (kind === 'gitea-issue') {
+    return { provider: 'gitea', type: 'issue', number }
   }
   if (kind === 'bitbucket-pr' || kind === 'azure-devops-pr' || kind === 'gitea-pr') {
     const provider =

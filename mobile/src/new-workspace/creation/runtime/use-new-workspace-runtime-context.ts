@@ -8,6 +8,7 @@ import {
   taskLinearStatusRead,
   taskPreflightRead
 } from '../../../tasks/screen-state/mobile-task-runtime-operations'
+import { filterMobileSupportedTaskProviders } from '../../../tasks/screen-state/mobile-task-provider-support'
 import {
   filterAvailableTaskProviders,
   normalizeVisibleTaskProviders,
@@ -147,7 +148,9 @@ export function useNewWorkspaceRuntimeContext(
       const linearConnected =
         readProbeMember(settledValue(linearRes, taskLinearStatusRead.interpret), 'connected') ===
         true
-      const visibleProviders = normalizeVisibleTaskProviders(settingsValue?.visibleTaskProviders)
+      const visibleProviders = filterMobileSupportedTaskProviders(
+        normalizeVisibleTaskProviders(settingsValue?.visibleTaskProviders)
+      )
       const availableProviders = filterAvailableTaskProviders(visibleProviders, {
         gitlabInstalled: glabInstalled,
         linearConnected

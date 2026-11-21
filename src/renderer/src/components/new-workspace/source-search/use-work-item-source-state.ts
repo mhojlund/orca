@@ -16,6 +16,7 @@ export function useWorkItemSourceState(textOnly: boolean, value: string) {
   const [rawGithubItems, setGithubItems] = useState<GitHubWorkItem[]>([])
   const githubItems = useGitHubTaskItems(rawGithubItems)
   const [gitlabItems, setGitlabItems] = useState<GitLabWorkItem[]>([])
+  const [giteaItems, setGiteaItems] = useState<GitHubWorkItem[]>([])
   const [branches, setBranches] = useState<BaseRefSearchResult[]>([])
   const [branchResultsSource, setBranchResultsSource] = useState<{
     repoId: string
@@ -24,6 +25,7 @@ export function useWorkItemSourceState(textOnly: boolean, value: string) {
   const [jiraIssues, setJiraIssues] = useState<JiraIssue[]>([])
   const [githubLoading, setGithubLoading] = useState(false)
   const [gitlabLoading, setGitlabLoading] = useState(false)
+  const [giteaLoading, setGiteaLoading] = useState(false)
   const [branchesLoading, setBranchesLoading] = useState(false)
   const [linearUrlLoadingFeedbackQuery, setLinearUrlLoadingFeedbackQuery] = useState<string | null>(
     null
@@ -45,6 +47,8 @@ export function useWorkItemSourceState(textOnly: boolean, value: string) {
     setGithubItems,
     gitlabItems,
     setGitlabItems,
+    giteaItems,
+    setGiteaItems,
     branches,
     setBranches,
     branchResultsSource,
@@ -55,6 +59,8 @@ export function useWorkItemSourceState(textOnly: boolean, value: string) {
     setGithubLoading,
     gitlabLoading,
     setGitlabLoading,
+    giteaLoading,
+    setGiteaLoading,
     branchesLoading,
     setBranchesLoading,
     linearUrlLoadingFeedbackQuery,

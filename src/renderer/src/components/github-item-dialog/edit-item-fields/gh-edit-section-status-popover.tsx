@@ -32,6 +32,7 @@ export function GHEditSectionStatusPopover({
   duplicatePickerTitle,
   filteredDuplicateCandidates,
   directDuplicateTarget,
+  closeReasons,
   onOpenChange,
   onStateChange,
   onDuplicateSearchChange,
@@ -51,6 +52,7 @@ export function GHEditSectionStatusPopover({
   duplicatePickerTitle: string
   filteredDuplicateCandidates: GitHubWorkItem[]
   directDuplicateTarget: number | null
+  closeReasons: boolean
   onOpenChange: (open: boolean) => void
   onStateChange: (newState: 'open' | 'closed', closeAction?: TaskPageGitHubCloseAction) => void
   onDuplicateSearchChange: (value: string) => void
@@ -203,30 +205,36 @@ export function GHEditSectionStatusPopover({
               )}
             >
               <Check className="size-4 text-muted-foreground" />
-              {t('auto.components.TaskPage.closeAsCompleted', 'Close as completed')}
+              {closeReasons
+                ? t('auto.components.TaskPage.closeAsCompleted', 'Close as completed')
+                : t('auto.components.TaskPage.giteaClose', 'Close')}
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                onStateChange('closed', { stateReason: 'not_planned' })
-                onOpenChange(false)
-              }}
-              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-[12px] hover:bg-accent"
-            >
-              <Ban className="size-4 text-muted-foreground" />
-              {t('auto.components.TaskPage.closeAsNotPlanned', 'Close as not planned')}
-            </button>
-            <button
-              type="button"
-              onClick={onOpenDuplicatePicker}
-              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-[12px] hover:bg-accent"
-            >
-              <Copy className="size-4 text-muted-foreground" />
-              <span className="min-w-0 flex-1 truncate">
-                {t('auto.components.TaskPage.closeAsDuplicate', 'Close as duplicate')}
-              </span>
-              <ChevronRight className="size-3.5 text-muted-foreground" />
-            </button>
+            {closeReasons ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onStateChange('closed', { stateReason: 'not_planned' })
+                    onOpenChange(false)
+                  }}
+                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-[12px] hover:bg-accent"
+                >
+                  <Ban className="size-4 text-muted-foreground" />
+                  {t('auto.components.TaskPage.closeAsNotPlanned', 'Close as not planned')}
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenDuplicatePicker}
+                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-[12px] hover:bg-accent"
+                >
+                  <Copy className="size-4 text-muted-foreground" />
+                  <span className="min-w-0 flex-1 truncate">
+                    {t('auto.components.TaskPage.closeAsDuplicate', 'Close as duplicate')}
+                  </span>
+                  <ChevronRight className="size-3.5 text-muted-foreground" />
+                </button>
+              </>
+            ) : null}
           </>
         )}
       </PopoverContent>

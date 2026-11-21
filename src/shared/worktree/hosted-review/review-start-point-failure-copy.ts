@@ -11,7 +11,11 @@ export const REVIEW_START_POINT_FAILURE_COPY = {
   'gitlab.projectNotFound': 'No GitLab project found for this repository.',
   'gitlab.mrNotFound': 'MR !{{number}} not found.',
   'gitlab.mrSourceBranchMissing': 'MR !{{number}} has no source branch.',
-  'gitlab.forkHeadUnresolved': 'Could not resolve fork MR !{{number}} head after fetch.'
+  'gitlab.forkHeadUnresolved': 'Could not resolve fork MR !{{number}} head after fetch.',
+  'gitea.remoteNotFound': 'No Gitea or Forgejo remote found for this repository.',
+  'gitea.prNotFound': 'PR #{{number}} not found.',
+  'gitea.prHeadBranchMissing': 'PR #{{number}} has no head branch.',
+  'gitea.forkHeadUnresolved': 'Could not resolve PR #{{number}} head after fetch.'
 } as const
 
 export type ReviewStartPointFailureCode = keyof typeof REVIEW_START_POINT_FAILURE_COPY

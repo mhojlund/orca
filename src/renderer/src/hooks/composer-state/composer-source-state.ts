@@ -8,6 +8,8 @@ import { useProjectTargetActions } from './workspace-target/project-target-actio
 import { useBranchStartPointActions } from './workspace-start-point/branch-start-point-actions'
 import { useGitHubProviderSelection } from './linked-work-items/github-provider-selection'
 import { useGitLabProviderSelection } from './linked-work-items/gitlab-provider-selection'
+import { useGiteaPrStartPoint } from './linked-work-items/gitea-pr-start-point-effect'
+import { useGiteaProviderSelection } from './linked-work-items/gitea-provider-selection'
 import { useWorkItemSourceActions } from './workspace-start-point/work-item-source-actions'
 import { useIssueSourceActions } from './linked-work-items/issue-source-actions'
 import { useComposerNavigationActions } from './card-projection/composer-navigation-actions'
@@ -187,6 +189,8 @@ export function useComposerSourceState(
     settings: target.composerTargetStore.settings,
     smartSourceSelectionRef: target.asyncComposerState.smartSourceSelectionRef
   })
+  const giteaProviderSelection = useGiteaProviderSelection(target)
+  useGiteaPrStartPoint(target)
   const gitlabProviderSelection = useGitLabProviderSelection({
     smartSourceSelectionRef: target.asyncComposerState.smartSourceSelectionRef,
     applyLinkedGitLabWorkItem: sourceIdentityActions.applyLinkedGitLabWorkItem,
@@ -287,6 +291,7 @@ export function useComposerSourceState(
     branchStartPointActions,
     githubProviderSelection,
     gitlabProviderSelection,
+    giteaProviderSelection,
     workItemSourceActions,
     issueSourceActions,
     composerNavigationActions

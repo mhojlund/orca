@@ -27,6 +27,7 @@ import {
 import type { RuntimeClientTarget } from '../../../../../shared/remote-runtime/host-catalog/runtime-client-target'
 import { workItemsCacheKey } from '../cache/cache-identity'
 import {
+  isWorkItemForgeSource,
   workItemForgeIpc,
   workItemForgeProviderFor,
   workItemRpcMethod,
@@ -99,7 +100,7 @@ export function findGitHubWorkItemRepo(
   repoPath: string,
   source?: TaskSourceContext | null
 ): Repo | undefined {
-  return source?.provider === 'github'
+  return source && isWorkItemForgeSource(source)
     ? getGitHubRepoLookupIndex(state.repos).findOnHost(source.hostId, repoId, repoPath)
     : findRepoForGitHubOwner(state, repoId, repoPath)
 }
@@ -126,7 +127,7 @@ export function getGitHubWorkItemSourceHostId(
   repo: Pick<Repo, 'connectionId' | 'executionHostId'> | undefined,
   sourceContext?: TaskSourceContext | null
 ): ExecutionHostId | undefined {
-  if (sourceContext?.provider === 'github') {
+  if (sourceContext && isWorkItemForgeSource(sourceContext)) {
     return sourceContext.hostId
   }
   return repo ? getRepoExecutionHostId(repo) : undefined
@@ -139,7 +140,8 @@ export function getGitHubWorkItemRowHostId(
   repoPath: string,
   sourceContext?: TaskSourceContext | null
 ): ExecutionHostId | undefined {
-  const sourceHostId = sourceContext?.provider === 'github' ? sourceContext.hostId : undefined
+  const sourceHostId =
+    sourceContext && isWorkItemForgeSource(sourceContext) ? sourceContext.hostId : undefined
   const rows = state.repos?.filter((entry) => entry.id === repoId) ?? []
   // Why not by id alone: a twin would resolve to whichever row is listed first.
   const row =
@@ -153,7 +155,7 @@ export function getGitHubWorkItemSourceCacheScope(
   repo: Pick<Repo, 'connectionId' | 'executionHostId'> | undefined,
   sourceContext?: TaskSourceContext | null
 ): string | undefined {
-  if (sourceContext?.provider === 'github') {
+  if (sourceContext && isWorkItemForgeSource(sourceContext)) {
     return getTaskSourceCacheScope(sourceContext)
   }
   return getGitHubWorkItemSourceHostId(repo, sourceContext)
@@ -164,7 +166,7 @@ export function getGitHubRepoSourceSettings(
   repo: Pick<Repo, 'id' | 'connectionId' | 'executionHostId'> | undefined,
   sourceContext?: TaskSourceContext | null
 ): RuntimeFocusSettings {
-  if (sourceContext?.provider === 'github') {
+  if (sourceContext && isWorkItemForgeSource(sourceContext)) {
     return settingsForGitHubTaskSource(state, repo, sourceContext)
   }
   return settingsForGitHubRepoOwner(state.settings, repo)
@@ -176,7 +178,7 @@ export function getGitHubSourceTarget(
   repo: Pick<Repo, 'id' | 'connectionId' | 'executionHostId'> | undefined,
   sourceContext?: TaskSourceContext | null
 ): RuntimeClientTarget {
-  if (sourceContext?.provider === 'github') {
+  if (sourceContext && isWorkItemForgeSource(sourceContext)) {
     const sourceHost = parseExecutionHostId(sourceContext.hostId)
     return runtimeTargetForOwnerEnvironment(
       sourceHost?.kind === 'runtime'
@@ -196,7 +198,7 @@ export function getGitHubWorkItemRequestContext(
   repoPath: string,
   sourceContext?: TaskSourceContext | null
 ): GitHubWorkItemRequestContext {
-  if (sourceContext?.provider === 'github') {
+  if (sourceContext && isWorkItemForgeSource(sourceContext)) {
     const parsedHost = parseExecutionHostId(sourceContext.hostId)
     if (parsedHost?.kind === 'runtime') {
       return {

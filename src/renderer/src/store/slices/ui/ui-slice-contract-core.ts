@@ -84,6 +84,8 @@ export type TaskPageData = {
   openGitHubInitialTab?: 'conversation' | 'checks' | 'files'
   openGitLabWorkItem?: GitLabWorkItem
   openGitLabSourceContext?: TaskSourceContext | null
+  openGiteaWorkItem?: GitHubWorkItem
+  openGiteaSourceContext?: TaskSourceContext | null
   openLinearIssue?: LinearIssue
   openLinearSourceContext?: TaskSourceContext | null
   openJiraIssue?: JiraIssue
@@ -102,7 +104,7 @@ export type NewWorkspaceDraft = {
   note: string
   attachments: string[]
   linkedWorkItem: {
-    provider?: 'github' | 'gitlab' | 'linear' | 'jira'
+    provider?: 'github' | 'gitlab' | 'gitea' | 'linear' | 'jira'
     type: 'issue' | 'pr' | 'mr'
     number: number
     title: string

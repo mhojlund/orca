@@ -1,6 +1,12 @@
-export type TaskProvider = 'github' | 'gitlab' | 'linear' | 'jira'
+export type TaskProvider = 'github' | 'gitlab' | 'gitea' | 'linear' | 'jira'
 
-export const TASK_PROVIDERS: readonly TaskProvider[] = ['github', 'gitlab', 'linear', 'jira']
+export const TASK_PROVIDERS: readonly TaskProvider[] = [
+  'github',
+  'gitlab',
+  'gitea',
+  'linear',
+  'jira'
+]
 
 const TASK_PROVIDER_SET = new Set<TaskProvider>(TASK_PROVIDERS)
 
@@ -96,8 +102,8 @@ function isTaskProviderAvailable(
   if (provider === 'gitlab') {
     return availability.gitlabInstalled
   }
-  // Disconnected Jira must remain visible as its own first-time setup entry point.
-  if (provider === 'jira') {
+  // Disconnected Jira and Gitea must remain visible as their own first-time setup entry points.
+  if (provider === 'jira' || provider === 'gitea') {
     return true
   }
   return availability.linearConnected
@@ -111,4 +117,17 @@ export function resolveVisibleTaskProvider(
     return preferred
   }
   return visibleProviders[0] ?? 'github'
+}
+
+/** Falls back from an unconfigured GitHub default to the first configured visible provider. */
+export function resolveConfiguredDefaultTaskProvider(
+  preferred: TaskProvider | null | undefined,
+  visibleProviders: readonly TaskProvider[],
+  configured: ReadonlySet<TaskProvider> | null
+): TaskProvider {
+  const resolved = resolveVisibleTaskProvider(preferred, visibleProviders)
+  if (resolved !== 'github' || !configured || configured.has('github')) {
+    return resolved
+  }
+  return TASK_PROVIDERS.find((p) => visibleProviders.includes(p) && configured.has(p)) ?? resolved
 }

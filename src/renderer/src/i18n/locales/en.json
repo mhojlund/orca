@@ -3067,7 +3067,8 @@
         "dropPartiallyAttached_one": "{{failureCount}} of {{count}} item could not be attached.",
         "dropPartiallyAttached_other": "{{failureCount}} of {{count}} items could not be attached.",
         "dropPartiallyAttached": "{{failureCount}} of {{count}} items could not be attached.",
-        "folderSetupSupportCheckFailed": "Couldn't confirm whether this host runs folder setup scripts. Try again."
+        "folderSetupSupportCheckFailed": "Couldn't confirm whether this host runs folder setup scripts. Try again.",
+        "giteaPrBaseFailed": "Failed to resolve PR base."
       },
       "useGlobalFileDrop": {
         "38c9f034ff": "Failed to upload dropped files.",
@@ -4275,7 +4276,26 @@
           "linearViewNotFound": "Saved Linear view was not found.",
           "linearViewRestoreFailed": "Failed to restore saved Linear view."
         },
-        "shownCount_one": "{{count}} shown"
+        "shownCount_one": "{{count}} shown",
+        "backToGiteaList": "Gitea list",
+        "giteaStateOpen": "Open",
+        "giteaStateClosed": "Closed",
+        "giteaStateAll": "All",
+        "giteaInvolvementEveryone": "Everyone",
+        "giteaInvolvementAssigned": "Assigned to me",
+        "giteaInvolvementCreated": "Created by me",
+        "giteaState": "State",
+        "giteaConnect": "Connect Gitea/Forgejo",
+        "giteaEmptyTitle": "No Gitea issues",
+        "giteaEmptyDescription": "No Gitea or Forgejo issues match this filter.",
+        "giteaOpenInBrowser": "Open in Gitea",
+        "giteaLoadFailed": "Could not load Gitea issues. Refresh to try again.",
+        "giteaSourceLabel": "Gitea",
+        "giteaClose": "Close",
+        "giteaRefreshItems": "Refresh Gitea list",
+        "giteaEmptyPrsTitle": "No Gitea pull requests",
+        "giteaEmptyPrsDescription": "No Gitea or Forgejo pull requests match this filter.",
+        "giteaStartFromPr": "Start workspace from PR {{number}}"
       },
       "Terminal": {
         "73768427cf": "Close",
@@ -7466,7 +7486,8 @@
           "fee535205b": "Tasks",
           "d599269755": "Hide from sidebar",
           "artifacts": "Artifacts",
-          "skills": "Skills"
+          "skills": "Skills",
+          "openGiteaTasks": "Open Gitea tasks"
         },
         "SidebarRepositoryFilterSection": {
           "d3a9c4cea1": "Clear",
@@ -10445,7 +10466,9 @@
           "integrationsLink": "Integrations",
           "skillHint": ". After Linear is connected, usage examples stay under Settings → Linear.",
           "incompleteBannerBodyWithLinear": "Hide providers you do not use, or expand a card and finish its steps. For Linear: API access, the agent skill, and Show in Tasks.",
-          "30255b39dc": "Task providers"
+          "30255b39dc": "Task providers",
+          "giteaLabel": "Gitea",
+          "giteaDescription": "Browse Gitea and Forgejo issues and start workspaces from them."
         },
         "TerminalAppearanceSection": {
           "a14a427ae4": "Thickness of the pane divider line.",
@@ -16720,7 +16743,9 @@
             "crossRepoDifferentTaskSource": "The GitHub URL points to {{repo}}, which is different from the selected task source.",
             "crossRepoDifferentProject": "The GitHub URL points to {{repo}}, which is different from the selected project.",
             "useAsWorkspaceName": "Use <name>\"{{name}}\"</name> as workspace name",
-            "createNewBranchNamed": "Create new branch <name>{{name}}</name>"
+            "createNewBranchNamed": "Create new branch <name>{{name}}</name>",
+            "searchGitea": "Search Gitea issues",
+            "giteaMode": "Gitea"
           },
           "ProjectCombobox": {
             "empty": "No projects match your search.",
@@ -16750,7 +16775,8 @@
                   "b1418294ea": "Start typing to search GitLab MRs and issues.",
                   "80e7791c93": "No matching branches.",
                   "b4e65d98a6": "Start typing to search Linear issues.",
-                  "5ba5d3e516": "Start typing to search Jira issues, or paste an issue URL."
+                  "5ba5d3e516": "Start typing to search Jira issues, or paste an issue URL.",
+                  "giteaIssues": "Start typing to search Gitea issues."
                 }
               }
             }
@@ -25368,7 +25394,8 @@
         "jira_task_url": "Jira task (URL)",
         "bitbucket_pr": "Bitbucket PR",
         "azure_devops_pr": "Azure DevOps PR",
-        "gitea_pr": "Gitea PR"
+        "gitea_pr": "Gitea PR",
+        "gitea_issue": "Gitea issue"
       },
       "mrReference": "MR !{{number}}",
       "prReference": "PR #{{number}}",
@@ -26797,6 +26824,12 @@
         "mrNotFound": "MR !{{number}} not found.",
         "mrSourceBranchMissing": "MR !{{number}} has no source branch.",
         "forkHeadUnresolved": "Could not resolve fork MR !{{number}} head after fetch."
+      },
+      "gitea": {
+        "remoteNotFound": "No Gitea or Forgejo remote found for this repository.",
+        "prNotFound": "PR #{{number}} not found.",
+        "prHeadBranchMissing": "PR #{{number}} has no head branch.",
+        "forkHeadUnresolved": "Could not resolve PR #{{number}} head after fetch."
       }
     },
     "bitbucketConnect": {

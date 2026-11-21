@@ -66,6 +66,7 @@ export function useSmartWorkspaceFieldAvailability({
 }) {
   const t = useTranslate()
   const { disabled, textOnly, repoBackedSourcesDisabled, branchesEnabled, value } = props
+  const giteaEnabled = props.giteaEnabled === true
   const { mode: storedMode, setMode, setDebouncedQuery } = state
   const preflightStatusCurrent = preflightStatusContextKey === expectedPreflightContextKey
   const glabInstalled = preflightStatusCurrent ? preflightStatus?.glab?.installed : undefined
@@ -105,6 +106,9 @@ export function useSmartWorkspaceFieldAvailability({
     }
     if (item.id === 'gitlab') {
       return gitlabSourceAvailable
+    }
+    if (item.id === 'gitea') {
+      return giteaEnabled && !repoBackedSourcesDisabled
     }
     if (item.id === 'linear') {
       return linearAvailable

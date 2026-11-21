@@ -6,6 +6,7 @@ import { getTaskPresetQuery } from '../../../../shared/work-items/task-preset-qu
 import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   type TaskProvider,
+  resolveConfiguredDefaultTaskProvider,
   resolveVisibleTaskProvider
 } from '../../../../shared/work-items/task-providers'
 import type { TaskSourceContext } from '../../../../shared/work-items/task-source-context'
@@ -17,6 +18,7 @@ import { TASK_SOURCE_CONTEXT_RUNTIME_CAPABILITY } from '../../../../shared/work-
 import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
 import type { PreflightStatus } from '../../../../preload/api/preflight/preflight-api'
 import { getTaskPageRepoSourceContext } from '../../lib/work-items/task-repo-source-context'
+import { getConfiguredTaskProviders } from '../../lib/work-items/configured-task-providers'
 export function useTaskPageRuntimeHosts(model: TaskPageRepoSelectionModel) {
   const t = useTranslate()
   const {
@@ -29,12 +31,39 @@ export function useTaskPageRuntimeHosts(model: TaskPageRepoSelectionModel) {
     runtimeStatusByEnvironmentId,
     selectedRepos,
     defaultTaskSource,
-    visibleTaskProviders
+    visibleTaskProviders,
+    preflightStatus,
+    preflightStatusCurrent,
+    preflightStatusChecked,
+    linearConnected,
+    jiraConnected
   } = model
   // Seed preset/query synchronously to avoid a throwaway initial empty-query request.
   const defaultTaskViewPreset = normalizeGitHubTaskPreset(settings?.defaultTaskViewPreset ?? 'all')
   const initialTaskQuery = getTaskPresetQuery(defaultTaskViewPreset)
-  const preferredTaskSource = pageData.taskSource ?? defaultTaskSource
+  const configuredTaskProviders = useMemo(
+    () =>
+      getConfiguredTaskProviders({
+        preflightStatus,
+        preflightReady: preflightStatusCurrent && preflightStatusChecked,
+        linearConnected: linearConnected === true,
+        jiraConnected: jiraConnected === true
+      }),
+    [
+      preflightStatus,
+      preflightStatusCurrent,
+      preflightStatusChecked,
+      linearConnected,
+      jiraConnected
+    ]
+  )
+  const preferredTaskSource =
+    pageData.taskSource ??
+    resolveConfiguredDefaultTaskProvider(
+      defaultTaskSource,
+      visibleTaskProviders,
+      configuredTaskProviders
+    )
   const [taskSource, setTaskSource] = useState<TaskProvider>(
     resolveVisibleTaskProvider(preferredTaskSource, visibleTaskProviders)
   )
@@ -51,7 +80,7 @@ export function useTaskPageRuntimeHosts(model: TaskPageRepoSelectionModel) {
   )
   const taskSourceRepoContexts = useMemo(
     () =>
-      taskSource === 'github' || taskSource === 'gitlab'
+      taskSource === 'github' || taskSource === 'gitlab' || taskSource === 'gitea'
         ? selectedRepos
             .map((repo) => getTaskPageRepoSourceContext(repo, taskSource))
             .filter((context): context is TaskSourceContext => context !== null)
@@ -88,7 +117,7 @@ export function useTaskPageRuntimeHosts(model: TaskPageRepoSelectionModel) {
     [hostRegistryById, t]
   )
   const runtimeTaskSourceHostIds = useMemo(() => {
-    if (taskSource !== 'github' && taskSource !== 'gitlab') {
+    if (taskSource !== 'github' && taskSource !== 'gitlab' && taskSource !== 'gitea') {
       return []
     }
     const hostIds = new Set<TaskSourceContext['hostId']>()

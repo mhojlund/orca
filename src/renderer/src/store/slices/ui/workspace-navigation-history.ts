@@ -1,3 +1,4 @@
+import { taskDetailEntryKey } from './workspace-navigation-task-detail-key'
 import type { StateCreator } from 'zustand'
 import type { AppState } from '../../types'
 import { findFirstIndexedWorktree } from '../../../lib/workspace/ownership/worktree-runtime-owner-index'
@@ -5,10 +6,7 @@ import type { GitHubWorkItem } from '../../../../../shared/github/work-items/wor
 import type { JiraIssue } from '../../../../../shared/jira/jira-types'
 import type { LinearIssue } from '../../../../../shared/linear/issue-types'
 import type { GitLabWorkItem } from '../../../../../shared/gitlab/gitlab-types'
-import {
-  getTaskSourceCacheScope,
-  type TaskSourceContext
-} from '../../../../../shared/work-items/task-source-context'
+import type { TaskSourceContext } from '../../../../../shared/work-items/task-source-context'
 import { parseWorkspaceKey } from '../../../../../shared/workspace/identity/workspace-scope'
 import {
   automationsPageLocationKey,
@@ -49,6 +47,12 @@ export type WorktreeNavHistoryTaskDetailEntry =
       kind: 'task-detail'
       source: 'gitlab'
       workItem: GitLabWorkItem
+      sourceContext?: TaskSourceContext | null
+    }
+  | {
+      kind: 'task-detail'
+      source: 'gitea'
+      workItem: GitHubWorkItem
       sourceContext?: TaskSourceContext | null
     }
   | {
@@ -123,32 +127,7 @@ function getHistoryEntryKey(entry: WorktreeNavHistoryEntry): string {
   if (entry.kind === 'automations-page') {
     return `view:automations-page:${automationsPageLocationKey(entry.location)}`
   }
-  if (entry.source === 'github') {
-    const sourceScope =
-      entry.sourceContext?.provider === 'github'
-        ? getTaskSourceCacheScope(entry.sourceContext)
-        : 'legacy'
-    return `view:task-detail:github:${sourceScope}:${entry.workItem.repoId}:${entry.workItem.type}:${entry.workItem.number}:${entry.initialTab ?? 'conversation'}`
-  }
-  if (entry.source === 'gitlab') {
-    const sourceScope =
-      entry.sourceContext?.provider === 'gitlab'
-        ? getTaskSourceCacheScope(entry.sourceContext)
-        : 'legacy'
-    return `view:task-detail:gitlab:${sourceScope}:${entry.workItem.repoId}:${entry.workItem.type}:${entry.workItem.number}`
-  }
-  if (entry.source === 'jira') {
-    const sourceScope =
-      entry.sourceContext?.provider === 'jira'
-        ? getTaskSourceCacheScope(entry.sourceContext)
-        : 'legacy'
-    return `view:task-detail:jira:${sourceScope}:${entry.issue.siteId ?? 'selected'}:${entry.issue.key}`
-  }
-  const sourceScope =
-    entry.sourceContext?.provider === 'linear'
-      ? getTaskSourceCacheScope(entry.sourceContext)
-      : 'legacy'
-  return `view:task-detail:linear:${sourceScope}:${entry.issue.workspaceId ?? 'selected'}:${entry.issue.id}`
+  return taskDetailEntryKey(entry)
 }
 
 type WorkspaceCatalog = Pick<AppState, 'folderWorkspaces' | 'worktreesByRepo'>

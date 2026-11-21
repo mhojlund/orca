@@ -91,6 +91,7 @@ export type NewWorkspaceComposerCardProps = {
   activeFolderWorkspaceId?: string | null
   onSmartGitHubItemSelect: (item: GitHubWorkItem) => void
   onSmartGitLabItemSelect: (item: GitLabWorkItem) => void
+  onSmartGiteaItemSelect: (item: GitHubWorkItem) => void
   onSmartBranchSelect: (refName: string, localBranchName: string) => void
   onSmartNameModeChange?: (mode: SmartNameMode) => void
   smartNameMode?: SmartNameMode
