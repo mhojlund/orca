@@ -131,7 +131,9 @@ const devChannelRepo = isHourlyChannel
     : isAdhocChannel
       ? 'orca-adhoc'
       : null
-const appId = 'com.stablyai.orca'
+// Side-by-side flavor: its own bundle ID, profile, URL scheme and CLI name, with updates off (see src/shared/app-lifecycle/identity/app-flavor.ts).
+const appFlavor = process.env.ORCA_APP_FLAVOR === 'rs' ? 'rs' : null
+const appId = appFlavor === 'rs' ? 'solutions.retcon.orca' : 'com.stablyai.orca'
 const featureWallResources = {
   from: 'resources/onboarding/feature-wall',
   to: 'onboarding/feature-wall'
@@ -269,14 +271,22 @@ const ORCA_MAC_TEAM_ID = '6CX3WHS9HZ'
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId,
-  productName: 'Orca',
-  protocols: [{ name: 'Orca', schemes: ['orca'] }],
+  productName: appFlavor === 'rs' ? 'Orca RS' : 'Orca',
+  protocols:
+    appFlavor === 'rs'
+      ? [{ name: 'Orca RS', schemes: ['orca-rs'] }]
+      : [{ name: 'Orca', schemes: ['orca'] }],
   toolsets: { appimage: '1.0.3' },
-  ...(devChannelBuildVersion
-    ? { extraMetadata: { version: devChannelBuildVersion } }
-    : localBuildVersion
-      ? { extraMetadata: { version: localBuildVersion } }
-      : {}),
+  ...(devChannelBuildVersion || localBuildVersion || appFlavor
+    ? {
+        extraMetadata: {
+          ...(devChannelBuildVersion || localBuildVersion
+            ? { version: devChannelBuildVersion ?? localBuildVersion }
+            : {}),
+          ...(appFlavor ? { name: 'orca-rs', orcaFlavor: appFlavor } : {})
+        }
+      }
+    : {}),
   directories: {
     buildResources: 'resources/build'
   },
@@ -503,7 +513,7 @@ module.exports = {
       }
       writeMacBuildCompatibility(resourcesDir, { version, commit, architecture })
     }
-    stampPackagedCliVersion(resourcesDir, context.packager.appInfo.version)
+    stampPackagedCliVersion(resourcesDir, context.packager.appInfo.version, appFlavor)
     // Before the prune, which drops the copied packages' type declarations too.
     copyPackagedTranscribeCpp(
       readPackage,
@@ -745,22 +755,25 @@ module.exports = {
         to: 'MacOS/orca-provider-exec'
       }
     ],
-    target: [
-      {
-        target: 'dmg',
-        arch: ['x64', 'arm64']
-      },
-      {
-        target: 'zip',
-        arch: ['x64', 'arm64']
-      }
-    ]
+    // The flavor installs locally only: build the host arch as a dmg, no zip/update payloads.
+    target: appFlavor
+      ? [{ target: 'dmg', arch: [process.arch === 'arm64' ? 'arm64' : 'x64'] }]
+      : [
+          {
+            target: 'dmg',
+            arch: ['x64', 'arm64']
+          },
+          {
+            target: 'zip',
+            arch: ['x64', 'arm64']
+          }
+        ]
   },
   // Why: release builds should fail if signing is unavailable instead of
   // silently downgrading to ad-hoc artifacts that look shippable in CI logs.
   forceCodeSigning: isMacRelease,
   dmg: {
-    artifactName: 'orca-macos-${arch}.${ext}'
+    artifactName: appFlavor ? 'orca-rs-macos-${arch}.${ext}' : 'orca-macos-${arch}.${ext}'
   },
   linux: {
     // shared-mime-info already maps md/markdown: advertise handler only, leaving mimeapps.list defaults intact.
@@ -853,23 +866,29 @@ module.exports = {
   // Dual-arch builds need target node-pty rebuilds or Intel Macs get arm64 binaries and posix_spawnp failure.
   // beforeBuild performs targeted rebuild then returns false to skip optional cpu-features.
   npmRebuild: true,
-  publish: {
-    provider: 'github',
-    owner: 'stablyai',
-    repo: devChannelRepo ?? 'orca',
-    // Keep main-repo releases draft until release-cut verifies all assets; early --publish always would expose missing Windows installers.
-    releaseType: devChannelRepo ? 'prerelease' : 'draft'
-  }
+  // The flavor has updates off, so it ships no update feed config.
+  publish: appFlavor
+    ? null
+    : {
+        provider: 'github',
+        owner: 'stablyai',
+        repo: devChannelRepo ?? 'orca',
+        // Keep main-repo releases draft until release-cut verifies all assets; early --publish always would expose missing Windows installers.
+        releaseType: devChannelRepo ? 'prerelease' : 'draft'
+      }
 }
 
 // Stamp the effective channel version where node-mode CLI code can read it.
-function stampPackagedCliVersion(resourcesDir, version) {
+function stampPackagedCliVersion(resourcesDir, version, flavor) {
   const packageJsonPath = join(resourcesDir, 'app.asar.unpacked', 'out', 'package.json')
   if (!existsSync(packageJsonPath)) {
     throw new Error(`Missing unpacked CLI package boundary: ${packageJsonPath}`)
   }
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'))
-  writeFileSync(packageJsonPath, `${JSON.stringify({ ...packageJson, version }, null, 2)}\n`)
+  const stamped = flavor
+    ? { ...packageJson, version, orcaFlavor: flavor }
+    : { ...packageJson, version }
+  writeFileSync(packageJsonPath, `${JSON.stringify(stamped, null, 2)}\n`)
 }
 
 function chmodUnixCliLaunchers(resourcesDir, electronPlatformName) {

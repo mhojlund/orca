@@ -3,6 +3,7 @@ import { homedir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
 import { getAppEnvironment } from '../../../shared/app-lifecycle/app-environment'
 import type { CliInstallStatus } from '../../../shared/cli/cli-install-types'
+import type { AppFlavor } from '../../../shared/app-lifecycle/identity/app-flavor'
 import {
   hasAppImagePathEnvironment,
   resolveAppImageRuntimeIdentity
@@ -18,6 +19,7 @@ import {
   LINUX_CLI_COMMAND_NAME
 } from '../packaged-assets/bundled-cli-launcher-path'
 import { DEFAULT_MAC_COMMAND_PATH, DEV_COMMAND_NAME } from './cli-install-constants'
+import { readAppFlavorAtAppPath } from '../../startup/app-flavor-reader'
 import { ensureDevLauncher } from '../launchers/cli-dev-launcher'
 import type { CliInstallerOptions, InstallSpec } from './cli-installer-contracts'
 import {
@@ -53,6 +55,7 @@ export abstract class CliInstallLocation {
   protected readonly processPathEnv: string | null
   protected readonly commandPathOverride: string | null
   protected readonly macCommandPath: string
+  protected readonly appFlavor: AppFlavor | null
   protected readonly privilegedRunner: (command: string) => Promise<void>
   protected readonly userPathReader: () => Promise<WindowsUserPathReadResult>
   protected readonly userPathMutationReader: () => Promise<WindowsUserPathReadResult>
@@ -70,7 +73,10 @@ export abstract class CliInstallLocation {
       // Why: development builds must not claim the production shell command.
       return DEV_COMMAND_NAME
     }
-    return this.platform === 'linux' ? LINUX_CLI_COMMAND_NAME : 'orca'
+    if (this.platform === 'linux') {
+      return this.appFlavor?.linuxCliCommandName ?? LINUX_CLI_COMMAND_NAME
+    }
+    return this.appFlavor?.cliCommandName ?? 'orca'
   }
 
   constructor(options: CliInstallerOptions = {}) {
@@ -80,6 +86,7 @@ export abstract class CliInstallLocation {
     this.resourcesPath = options.resourcesPath ?? process.resourcesPath
     this.execPathValue = options.execPath ?? process.execPath
     this.appPathValue = options.appPath ?? getAppEnvironment().getAppPath()
+    this.appFlavor = this.isPackaged ? readAppFlavorAtAppPath(this.appPathValue) : null
     this.homePath = options.homePath ?? homedir()
     this.localAppDataPath =
       options.localAppDataPath ??
@@ -89,10 +96,15 @@ export abstract class CliInstallLocation {
     this.commandPathOverride =
       options.commandPathOverride ?? process.env.ORCA_CLI_INSTALL_PATH ?? null
     // Resolve once for hot status reads; Apple Silicon Macs may lack /usr/local/bin.
-    const candidateMacPath = options.defaultMacCommandPath ?? DEFAULT_MAC_COMMAND_PATH
+    const macCommandName = this.appFlavor?.cliCommandName ?? 'orca'
+    const candidateMacPath =
+      options.defaultMacCommandPath ??
+      (this.appFlavor
+        ? join(dirname(DEFAULT_MAC_COMMAND_PATH), macCommandName)
+        : DEFAULT_MAC_COMMAND_PATH)
     this.macCommandPath = existsSync(dirname(candidateMacPath))
       ? candidateMacPath
-      : join(this.homePath, '.local', 'bin', 'orca')
+      : join(this.homePath, '.local', 'bin', macCommandName)
     this.privilegedRunner = options.privilegedRunner ?? runMacPrivilegedCommand
     this.userPathReader = options.userPathReader ?? readWindowsUserPathRegistry
     this.userPathMutationReader =

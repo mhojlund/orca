@@ -8,6 +8,7 @@ import { join, resolve } from 'node:path'
 import { getVersionManagerBinPaths } from '../codex-cli/command'
 import { isWindowsFnmDefaultAliasDir } from '../../shared/shell/command-resolution/fnm-default-alias-dirs'
 import { getMainE2EConfig } from './testing/e2e-config'
+import { getPackagedAppFlavor } from './packaged-app-flavor'
 import { DISABLED_CHROMIUM_FEATURES } from './chromium-policy/disabled-chromium-features'
 import { readHttp1CompatibilityMarker } from './network-compatibility/http1-compatibility-marker'
 import { checkServeUserDataPath } from './serve-launch/serve-user-data-path-guard'
@@ -218,6 +219,11 @@ export function configureDevUserDataPath(isDev: boolean): void {
   }
 
   if (!isDev) {
+    const flavor = getPackagedAppFlavor()
+    // A CLI-pinned --user-data-dir must still win over the flavor's default profile.
+    if (flavor && !app.commandLine.hasSwitch('user-data-dir')) {
+      app.setPath('userData', join(app.getPath('appData'), flavor.userDataDirName))
+    }
     return
   }
   const overrideUserDataPath = process.env.ORCA_DEV_USER_DATA_PATH
