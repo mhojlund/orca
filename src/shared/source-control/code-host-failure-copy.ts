@@ -37,6 +37,15 @@ export const CODE_HOST_FAILURE_COPY = {
     'GitHub resource to rerun was not found — it may have expired or been deleted.',
   'github.rerunRejected': 'Could not rerun checks — {{detail}}',
   'github.rerunFailed': 'Failed to rerun checks: {{detail}}',
+  'gitea.repoUnresolved': 'Could not resolve the Gitea/Forgejo repository for this checkout',
+  'gitea.authRequired':
+    'Connect this Gitea/Forgejo instance in Settings > Integrations to see private repositories and use @me filters.',
+  'gitea.permissionDenied':
+    "You don't have permission to do this. Check your Gitea/Forgejo token scopes.",
+  'gitea.notFound': 'Not found on Gitea/Forgejo. It may have been deleted, or issues are disabled.',
+  'gitea.unsupportedQualifier': 'Gitea/Forgejo ignored these filters: {{detail}}',
+  'gitea.closeReasonUnsupported': 'Gitea/Forgejo can only close issues as completed.',
+  'gitea.requestFailed': 'Gitea/Forgejo request failed: {{detail}}',
   'gitlab.projectUnresolved': 'Could not resolve GitLab project for this repository',
   'gitlab.unexpectedResponse': 'Unexpected response from GitLab',
   'gitlab.commentBodyRequired': 'Comment body is required',
