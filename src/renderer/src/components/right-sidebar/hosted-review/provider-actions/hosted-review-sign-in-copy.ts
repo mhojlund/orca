@@ -10,8 +10,7 @@ import {
 // Commands and variable names stay untranslated.
 const SIGN_IN_COMMANDS = { github: 'gh auth login', gitlab: 'glab auth login' } as const
 const SIGN_IN_VARIABLES = {
-  'azure-devops': 'ORCA_AZURE_DEVOPS_TOKEN',
-  gitea: 'ORCA_GITEA_TOKEN'
+  'azure-devops': 'ORCA_AZURE_DEVOPS_TOKEN'
 } as const
 
 export function authRequiredDetail(
@@ -23,6 +22,12 @@ export function authRequiredDetail(
     return t(
       'sourceControl.createReviewFailure.authRequiredBitbucket',
       'Bitbucket is not authenticated. Next step: connect Bitbucket in Settings > Integrations, or set ORCA_BITBUCKET_* in this environment.'
+    )
+  }
+  if (provider === 'gitea') {
+    return t(
+      'sourceControl.createReviewFailure.authRequiredGitea',
+      'Gitea / Forgejo is not authenticated. Next step: connect it in Settings > Integrations, or set ORCA_GITEA_TOKEN in this environment.'
     )
   }
   if (provider === 'github' || provider === 'gitlab') {

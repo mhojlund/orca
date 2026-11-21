@@ -153,11 +153,19 @@ export const getIntegrationsPaneSearchEntries = createLocalizedCatalog(() => [
       'Gitea integration'
     ),
     description: translate(
-      'auto.components.settings.integrations.search.d0d019dc29',
-      'Gitea authentication via API token environment variables.'
+      'auto.components.settings.integrations.search.giteaForgejoDescription',
+      'Gitea and Forgejo instances with personal access tokens, for issues, pull requests and commit statuses.'
     ),
     keywords: [
       ...translateSearchKeyword('auto.components.settings.integrations.search.129fc59aa8', 'gitea'),
+      ...translateSearchKeyword(
+        'auto.components.settings.integrations.search.giteaForgejoKeyword',
+        'forgejo'
+      ),
+      ...translateSearchKeyword(
+        'auto.components.settings.integrations.search.giteaCodebergKeyword',
+        'codeberg'
+      ),
       ...translateSearchKeyword(
         'auto.components.settings.integrations.search.33180e8c10',
         'self-hosted'
