@@ -50,6 +50,8 @@ export const FLAG_HELP_TEXT: Record<string, string> = {
     '--gitlab-issue <number|url|null> Linked GitLab issue number or URL; null clears on set',
   'gitlab-mr':
     '--gitlab-mr <number|url|null> Linked GitLab merge request number or URL; null clears on set',
+  'gitea-issue':
+    '--gitea-issue <number|url|null> Linked Gitea/Forgejo issue number or URL; null clears on set',
   'linear-issue':
     '--linear-issue <id|url|null> Linked Linear issue identifier or URL; null clears on set',
   json: '--json                 Emit machine-readable JSON',

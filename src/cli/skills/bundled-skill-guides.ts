@@ -488,6 +488,7 @@ const ORCA_CLI_MARKDOWN = [
   "flags leave links unchanged; literal `null` clears only the named link on `set` and",
   "is refused on `create`. Folder-based repos can store numeric links, but missing",
   "source/remote identity prevents URL validation and may leave provider links unavailable.",
+  "`--gitea-issue` links a Gitea or Forgejo issue by number (`42` / `#42`) or issue URL as a reference attachment; on `create` it can be combined with `--reference`, and on `set` it replaces the existing Gitea issue link (`null` clears it).",
   "Old runtimes that predate these existing fields may ignore them; verify with `worktree show --json`.",
   "",
   "## Terminals",
