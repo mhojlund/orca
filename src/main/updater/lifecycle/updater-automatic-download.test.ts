@@ -21,7 +21,11 @@ const { autoUpdater, nativeUpdater, prepareRendererForUpdate, hasInProcessTermin
   })
 
 vi.mock('electron', () => ({
-  app: Object.assign(new EventEmitter(), { isPackaged: true, getVersion: () => '1.0.0' }),
+  app: Object.assign(new EventEmitter(), {
+    isPackaged: true,
+    getVersion: () => '1.0.0',
+    getAppPath: () => '/nonexistent-app'
+  }),
   autoUpdater: nativeUpdater,
   powerMonitor: new EventEmitter()
 }))

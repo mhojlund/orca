@@ -40,6 +40,7 @@ fi
 
 CONTENTS="$APP_PATH/Contents"
 ELECTRON="$CONTENTS/MacOS/Orca"
+[ -x "$ELECTRON" ] || ELECTRON="$CONTENTS/MacOS/Orca RS"
 CLI="$CONTENTS/Resources/app.asar.unpacked/out/cli/index.js"
 
 export ORCA_NODE_OPTIONS="${NODE_OPTIONS-}"

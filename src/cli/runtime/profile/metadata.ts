@@ -1,6 +1,7 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
+import { readCliAppFlavor } from '../../cli-app-flavor'
 import {
   findTransport,
   getRuntimeMetadataPath,
@@ -60,8 +61,9 @@ export function getPlatformUserDataPath(
   platform: NodeJS.Platform = process.platform,
   homeDir = homedir()
 ): string {
+  const dirName = readCliAppFlavor()?.userDataDirName ?? 'orca'
   if (platform === 'darwin') {
-    return join(homeDir, 'Library', 'Application Support', 'orca')
+    return join(homeDir, 'Library', 'Application Support', dirName)
   }
   if (platform === 'win32') {
     const appData = process.env.APPDATA
@@ -71,8 +73,8 @@ export function getPlatformUserDataPath(
         'APPDATA is not set, so the Orca runtime metadata path cannot be resolved.'
       )
     }
-    return join(appData, 'orca')
+    return join(appData, dirName)
   }
   // Match Electron’s packaged userData path.
-  return join(process.env.XDG_CONFIG_HOME || join(homeDir, '.config'), 'orca')
+  return join(process.env.XDG_CONFIG_HOME || join(homeDir, '.config'), dirName)
 }
