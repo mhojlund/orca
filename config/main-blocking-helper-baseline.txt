@@ -1356,7 +1356,7 @@
 1 src/main/startup/agent-accounts/codex-launch-preparation.ts
 1 src/main/startup/agent-accounts/codex-session-resume-launch.ts
 1 src/main/startup/cloud-startup/main-process-connector-startup.ts
-7 src/main/startup/configure-process.ts
+8 src/main/startup/configure-process.ts # one-shot startup read of the flavor stamp before userData is chosen
 1 src/main/startup/diagnostics/event-loop-stall-probe.ts
 2 src/main/startup/diagnostics/startup-diagnostics.ts
 3 src/main/startup/gpu-recovery/gpu-fallback-marker.ts

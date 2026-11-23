@@ -485,6 +485,7 @@
 3 src/main/ssh/system-transport/file-transfer/system-ssh-sftp-transfer.ts
 3 src/main/ssh/system-transport/ssh-control-socket.ts
 3 src/main/ssh/system-transport/system-ssh-binary.ts
+1 src/main/startup/app-flavor-reader.ts # one-shot startup read of the flavor stamp before userData is chosen
 3 src/main/startup/cli-launch/cli-launch-redirect.ts
 2 src/main/startup/configure-process.ts
 1 src/main/startup/diagnostics/startup-diagnostics.ts

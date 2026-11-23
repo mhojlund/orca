@@ -19,7 +19,7 @@ import {
   LINUX_CLI_COMMAND_NAME
 } from '../packaged-assets/bundled-cli-launcher-path'
 import { DEFAULT_MAC_COMMAND_PATH, DEV_COMMAND_NAME } from './cli-install-constants'
-import { readAppFlavorAtAppPath } from '../../startup/app-flavor-reader'
+import { getActiveAppFlavor } from '../../startup/app-flavor-state'
 import { ensureDevLauncher } from '../launchers/cli-dev-launcher'
 import type { CliInstallerOptions, InstallSpec } from './cli-installer-contracts'
 import {
@@ -86,7 +86,7 @@ export abstract class CliInstallLocation {
     this.resourcesPath = options.resourcesPath ?? process.resourcesPath
     this.execPathValue = options.execPath ?? process.execPath
     this.appPathValue = options.appPath ?? getAppEnvironment().getAppPath()
-    this.appFlavor = this.isPackaged ? readAppFlavorAtAppPath(this.appPathValue) : null
+    this.appFlavor = this.isPackaged ? getActiveAppFlavor() : null
     this.homePath = options.homePath ?? homedir()
     this.localAppDataPath =
       options.localAppDataPath ??

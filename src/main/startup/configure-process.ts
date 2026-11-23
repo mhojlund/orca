@@ -8,7 +8,8 @@ import { join, resolve } from 'node:path'
 import { getVersionManagerBinPaths } from '../codex-cli/command'
 import { isWindowsFnmDefaultAliasDir } from '../../shared/shell/command-resolution/fnm-default-alias-dirs'
 import { getMainE2EConfig } from './testing/e2e-config'
-import { getPackagedAppFlavor } from './packaged-app-flavor'
+import { readAppFlavorAtAppPath } from './app-flavor-reader'
+import { setActiveAppFlavor } from './app-flavor-state'
 import { DISABLED_CHROMIUM_FEATURES } from './chromium-policy/disabled-chromium-features'
 import { readHttp1CompatibilityMarker } from './network-compatibility/http1-compatibility-marker'
 import { checkServeUserDataPath } from './serve-launch/serve-user-data-path-guard'
@@ -219,7 +220,8 @@ export function configureDevUserDataPath(isDev: boolean): void {
   }
 
   if (!isDev) {
-    const flavor = getPackagedAppFlavor()
+    const flavor = app.isPackaged ? readAppFlavorAtAppPath(app.getAppPath()) : null
+    setActiveAppFlavor(flavor)
     // A CLI-pinned --user-data-dir must still win over the flavor's default profile.
     if (flavor && !app.commandLine.hasSwitch('user-data-dir')) {
       app.setPath('userData', join(app.getPath('appData'), flavor.userDataDirName))

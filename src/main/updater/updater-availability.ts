@@ -1,10 +1,10 @@
 import { app } from 'electron'
-import { getPackagedAppFlavor } from '../startup/packaged-app-flavor'
+import { getActiveAppFlavor } from '../startup/app-flavor-state'
 
 /** Flavor builds must never self-update into the stock release feed. */
 export function isUpdaterAvailable(): boolean {
   if (!app.isPackaged) {
     return false
   }
-  return getPackagedAppFlavor()?.updatesEnabled !== false
+  return getActiveAppFlavor()?.updatesEnabled !== false
 }
