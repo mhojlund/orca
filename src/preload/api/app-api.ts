@@ -95,6 +95,8 @@ export type PlatformApi = {
     displayServer: 'wayland' | 'x11' | null
     /** Material this window was created with; secondary windows and the web client are 'off'. */
     windowMaterial: WindowMaterial
+    /** Product name of a flavor build (e.g. 'Orca RS'); absent for stock builds and the web client. */
+    appBrandName?: string | null
   }
 }
 

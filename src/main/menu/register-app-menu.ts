@@ -9,7 +9,6 @@ import { createAppMenuQuitItems, type AppMenuQuitHandlers } from './app-menu-qui
 import { createAppMenuReloadAndDevToolsItems } from './app-menu-reload-devtools-items'
 import { labeledAppMenuRole } from './labeled-app-menu-role'
 import { createAppWindowMenu } from './app-menu-window'
-import { brandMenuTemplate } from './app-flavor-menu-branding'
 import { getActiveAppFlavor } from '../startup/app-flavor-state'
 
 export type AppearanceMenuState = {
@@ -306,7 +305,7 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
     helpMenu
   ]
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(brandMenuTemplate(template)))
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
 let lastRegisterOptions: RegisterAppMenuOptions | null = null

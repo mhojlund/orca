@@ -3,9 +3,11 @@ import i18next, {
   type i18n as I18nInstance,
   type InitOptions,
   type Module,
+  type PostProcessorModule,
   type ReadCallback,
   type TOptions
 } from 'i18next'
+import { brandText } from '../app-lifecycle/identity/app-brand'
 import { isPseudoLocalizationLocale, pseudoLocalizeString } from './pseudo-localization'
 import { DEFAULT_UI_LOCALE } from './ui-locale'
 import type { PluginLanguagePackRegistration } from '../plugins/artifacts/plugin-language-pack-artifact'
@@ -19,6 +21,12 @@ export type OrcaI18n = {
   getPluginLanguagePacks: () => readonly PluginLanguagePackRegistration[]
   /** Maps a resolved UI locale to its i18next resource language; an unknown pack falls back to English. */
   resolveResourceLanguage: (locale: string) => string
+}
+
+const brandPostProcessor: PostProcessorModule = {
+  type: 'postProcessor',
+  name: 'orcaBrand',
+  process: (value) => (typeof value === 'string' ? brandText(value) : value)
 }
 
 const ENGLISH_PLURAL_RULES = new Intl.PluralRules(DEFAULT_UI_LOCALE)
@@ -51,6 +59,8 @@ export function createOrcaI18n(options: {
   }
 
   i18n.use(backend)
+  // Runs for catalog strings and caller fallbacks alike, so a flavor build never shows the stock name.
+  i18n.use(brandPostProcessor)
   for (const module of options.modules ?? []) {
     i18n.use(module)
   }
@@ -65,6 +75,7 @@ export function createOrcaI18n(options: {
     resources: { [DEFAULT_UI_LOCALE]: { translation: options.englishResources } },
     // An empty catalog value falls back to English instead of rendering blank.
     returnEmptyString: false,
+    postProcess: ['orcaBrand'],
     interpolation: { escapeValue: false },
     ...options.initOptions
   })

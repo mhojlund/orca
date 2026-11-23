@@ -51,7 +51,7 @@ import { installWindowsPathRegistryChangeListener } from '../pty/environment/win
 import { recordAgentSessionRuntimeEnd } from '../runtime/agent-session/records/agent-session-runtime-end-record'
 import { installNativeUnloadCoordinator } from './renderer-relays/native-unload-coordinator'
 import { WEB_CONTENTS_MAX_LISTENERS_PER_EVENT } from './web-contents-listener-budget'
-import { getActiveAppFlavor } from '../startup/app-flavor-state'
+import { appFlavorWindowArguments, getActiveAppFlavor } from '../startup/app-flavor-state'
 
 export function loadMainWindow(mainWindow: BrowserWindow, observer?: MainWindowLoadObserver): void {
   installRendererHangStackPolicy(
@@ -169,7 +169,8 @@ export function createMainWindow(
         formatBrowserClientHostIdArgument(getBrowserClientHostId()),
         ...(windowMaterial === 'off' ? [] : [formatWindowMaterialArgument(windowMaterial)]),
         ...(pumpHiddenFrames ? [formatHiddenWindowFramePumpArgument()] : []),
-        ...wslHostsWindowArguments()
+        ...wslHostsWindowArguments(),
+        ...appFlavorWindowArguments()
       ]
     }
   })

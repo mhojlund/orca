@@ -23,6 +23,12 @@ import type { PluginLanguagePackRegistration } from '../../../shared/plugins/art
 import { withTimeout } from '../../../shared/concurrency/promise-timeout-fallback'
 import { supportedIntlLocale } from './intl-locale-support'
 import { createOrcaI18n } from '../../../shared/i18n/orca-i18n-instance'
+import { setAppBrandName } from '../../../shared/app-lifecycle/identity/app-brand'
+
+// Before the first translation: every renderer entry imports this module, and the web client has no preload.
+setAppBrandName(
+  typeof window === 'undefined' ? null : (window.api?.platform?.get().appBrandName ?? null)
+)
 
 // Fetch catalogs as data: Chromium caches rejected module imports for the document's lifetime.
 const NON_DEFAULT_LOCALE_URLS: Record<Exclude<SupportedUiLocale, 'en'>, string> = {

@@ -18,11 +18,15 @@ const APP_FLAVORS: Readonly<Record<string, AppFlavor>> = {
   }
 }
 
+export function appFlavorFromId(id: string): AppFlavor | null {
+  return APP_FLAVORS[id] ?? null
+}
+
 /** Flavor builds stamp `orcaFlavor` into package.json; stock and dev builds have none. */
 export function appFlavorFromPackageJson(parsed: unknown): AppFlavor | null {
   if (!parsed || typeof parsed !== 'object' || !('orcaFlavor' in parsed)) {
     return null
   }
   const id = parsed.orcaFlavor
-  return typeof id === 'string' ? (APP_FLAVORS[id] ?? null) : null
+  return typeof id === 'string' ? appFlavorFromId(id) : null
 }

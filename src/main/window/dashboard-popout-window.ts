@@ -22,6 +22,7 @@ import type {
 } from '../../shared/keybindings/types'
 import { wslHostsWindowArguments } from '../wsl/host-lifecycle/wsl-host-gate'
 import { isMacAppPasteInput } from './editing/mac-app-paste-input'
+import { appFlavorWindowArguments } from '../startup/app-flavor-state'
 
 const MIN_WIDTH = 480
 const MIN_HEIGHT = 360
@@ -168,7 +169,7 @@ export function createOrFocusDashboardPopout(
       partition: DASHBOARD_POPOUT_PARTITION,
       // No webviews run here; disable embedding and omit host identity so client-placed pages stay mirrors.
       webviewTag: false,
-      ...(wslArguments.length > 0 ? { additionalArguments: wslArguments } : {})
+      additionalArguments: [...wslArguments, ...appFlavorWindowArguments()]
     }
   })
   installPrivilegedWindowNavigationPolicy(window.webContents)

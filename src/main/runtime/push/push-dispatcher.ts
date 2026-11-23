@@ -17,6 +17,7 @@ import {
   type NotificationPushCoverageRequest
 } from '../../../shared/rpc-contract/notifications/notifications-params'
 import type { MobilePushDeliveryMode } from './mobile-push-delivery-policy'
+import { brandText } from '../../../shared/app-lifecycle/identity/app-brand'
 
 const PUSH_RETRY_DELAY_MS = 2_000
 // Split requests at the gateway's per-send limit so extra paired phones still receive notifications.
@@ -182,7 +183,7 @@ export class PushDispatcher {
           notificationEpoch: target.notificationEpoch,
           source: 'agent-task-complete',
           agentState: null,
-          title: 'Orca',
+          title: brandText('Orca'),
           body: '',
           sound: false
         }
