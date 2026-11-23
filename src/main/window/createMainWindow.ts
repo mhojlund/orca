@@ -51,6 +51,7 @@ import { installWindowsPathRegistryChangeListener } from '../pty/environment/win
 import { recordAgentSessionRuntimeEnd } from '../runtime/agent-session/records/agent-session-runtime-end-record'
 import { installNativeUnloadCoordinator } from './renderer-relays/native-unload-coordinator'
 import { WEB_CONTENTS_MAX_LISTENERS_PER_EVENT } from './web-contents-listener-budget'
+import { getActiveAppFlavor } from '../startup/app-flavor-state'
 
 export function loadMainWindow(mainWindow: BrowserWindow, observer?: MainWindowLoadObserver): void {
   installRendererHangStackPolicy(
@@ -129,7 +130,7 @@ export function createMainWindow(
     ...(savedBounds ? { x: savedBounds.x, y: savedBounds.y } : {}),
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    title: opts?.title ?? 'Orca',
+    title: opts?.title ?? getActiveAppFlavor()?.displayName ?? 'Orca',
     show: false,
     // Deliver the app-activating click on macOS instead of requiring a second click.
     acceptFirstMouse: true,
@@ -245,6 +246,11 @@ export function createMainWindow(
     state,
     nativeSettings
   })
+
+  if (getActiveAppFlavor()) {
+    // The renderer's static <title>Orca</title> would otherwise replace the flavor's window title.
+    mainWindow.on('page-title-updated', (event) => event.preventDefault())
+  }
 
   mainWindow.on('closed', () => {
     closeDashboardPopout()

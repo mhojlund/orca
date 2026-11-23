@@ -1,5 +1,6 @@
 export type AppFlavor = {
   id: string
+  displayName: string
   userDataDirName: string
   cliCommandName: string
   linuxCliCommandName: string
@@ -9,6 +10,7 @@ export type AppFlavor = {
 const APP_FLAVORS: Readonly<Record<string, AppFlavor>> = {
   rs: {
     id: 'rs',
+    displayName: 'Orca RS',
     userDataDirName: 'orca-rs',
     cliCommandName: 'orca-rs',
     linuxCliCommandName: 'orca-rs-ide',

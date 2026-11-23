@@ -5,6 +5,7 @@ describe('appFlavorFromPackageJson', () => {
   it('maps the rs stamp to its profile dir, CLI names and disabled updates', () => {
     expect(appFlavorFromPackageJson({ name: 'orca-rs', orcaFlavor: 'rs' })).toEqual({
       id: 'rs',
+      displayName: 'Orca RS',
       userDataDirName: 'orca-rs',
       cliCommandName: 'orca-rs',
       linuxCliCommandName: 'orca-rs-ide',

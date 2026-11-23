@@ -272,6 +272,10 @@ const ORCA_MAC_TEAM_ID = '6CX3WHS9HZ'
 module.exports = {
   appId,
   productName: appFlavor === 'rs' ? 'Orca RS' : 'Orca',
+  // Default is `Copyright © <year> Orca` (product name, since package.json's author has no name); the flavor keeps it and credits the original.
+  ...(appFlavor === 'rs'
+    ? { copyright: `Based on Orca Copyright © ${new Date().getFullYear()} Orca` }
+    : {}),
   protocols:
     appFlavor === 'rs'
       ? [{ name: 'Orca RS', schemes: ['orca-rs'] }]
