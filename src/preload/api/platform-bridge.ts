@@ -18,8 +18,13 @@ function resolvePlatformInfo(): PlatformInfo {
     shell: process.env.SHELL?.trim() || process.env.ComSpec?.trim() || '',
     displayServer: getLinuxDisplayServer(),
     windowMaterial: parseWindowMaterialArgument(process.argv),
-    appBrandName: parseAppFlavorArgument(process.argv)?.displayName ?? null
+    ...appFlavorFields()
   })
+}
+
+function appFlavorFields(): { appBrandName: string | null; appFlavorId: string | null } {
+  const flavor = parseAppFlavorArgument(process.argv)
+  return { appBrandName: flavor?.displayName ?? null, appFlavorId: flavor?.id ?? null }
 }
 
 export const platformApi = {

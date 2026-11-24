@@ -3,6 +3,7 @@ import type React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 import classicIconUrl from '../../../../../../resources/icon.png?url'
+import classicRsIconUrl from '../../../../../../resources/icon-rs.png?url'
 import watercolorIconUrl from '../../../../../../resources/app-icons/orca-watercolor.png?url'
 import blueIconUrl from '../../../../../../resources/app-icons/orca-blue.png?url'
 import {
@@ -22,8 +23,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip'
 import { useTranslate, type Translate } from '@/i18n/use-translate'
 import { isWebClientLocation } from '@/app-shell/platform/web-client-location'
 
+const FLAVOR_CLASSIC_ICON_URLS: Readonly<Record<string, string>> = { rs: classicRsIconUrl }
+const flavorId = typeof window === 'undefined' ? null : window.api?.platform?.get().appFlavorId
+
 const APP_ICON_URLS = {
-  classic: classicIconUrl,
+  classic: (flavorId && FLAVOR_CLASSIC_ICON_URLS[flavorId]) || classicIconUrl,
   watercolor: watercolorIconUrl,
   blue: blueIconUrl
 } satisfies Record<BuiltInAppIconId, string>

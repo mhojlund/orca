@@ -97,6 +97,8 @@ export type PlatformApi = {
     windowMaterial: WindowMaterial
     /** Product name of a flavor build (e.g. 'Orca RS'); absent for stock builds and the web client. */
     appBrandName?: string | null
+    /** Flavor id of a flavor build (e.g. 'rs'); absent for stock builds and the web client. */
+    appFlavorId?: string | null
   }
 }
 

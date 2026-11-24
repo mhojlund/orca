@@ -189,8 +189,11 @@ function resolveDefaultPaths() {
   }
 }
 
+// Optional args: <source.png> <output.ico>, used for flavor icons.
 function main() {
-  const { sourcePng, outputIco } = resolveDefaultPaths()
+  const defaults = resolveDefaultPaths()
+  const sourcePng = process.argv[2] ?? defaults.sourcePng
+  const outputIco = process.argv[3] ?? defaults.outputIco
   if (!existsSync(sourcePng)) {
     console.error(`Error: source PNG not found at ${sourcePng}`)
     process.exit(1)

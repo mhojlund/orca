@@ -1,6 +1,9 @@
 import { Menu, Tray, nativeImage, nativeTheme, type NativeImage } from 'electron'
 import menuBarIconPath from '../../../resources/tray/orca-menu-barTemplate.png?asset&asarUnpack'
 import menuBarIconRetinaPath from '../../../resources/tray/orca-menu-barTemplate@2x.png?asset&asarUnpack'
+import rsMenuBarIconPath from '../../../resources/tray/orca-rs-menu-barTemplate.png?asset&asarUnpack'
+import rsMenuBarIconRetinaPath from '../../../resources/tray/orca-rs-menu-barTemplate@2x.png?asset&asarUnpack'
+import { getActiveAppFlavor } from '../startup/app-flavor-state'
 import { deferAppKitSceneMutation } from '../window/desktop-integration/appkit-scene-mutation'
 import { createAppIconImage } from '../window/desktop-integration/app-icon'
 import { translateMain } from '../i18n/main-i18n'
@@ -114,15 +117,24 @@ function scheduleTrayImage(): void {
   })
 }
 
+const FLAVOR_MENU_BAR_ICON_PATHS: Readonly<Record<string, { base: string; retina: string }>> = {
+  rs: { base: rsMenuBarIconPath, retina: rsMenuBarIconRetinaPath }
+}
+
 function createMacMenuBarImage(): NativeImage | null {
-  const image = nativeImage.createFromPath(menuBarIconPath)
+  const flavorId = getActiveAppFlavor()?.id
+  const iconPaths = (flavorId && FLAVOR_MENU_BAR_ICON_PATHS[flavorId]) || {
+    base: menuBarIconPath,
+    retina: menuBarIconRetinaPath
+  }
+  const image = nativeImage.createFromPath(iconPaths.base)
   const { width, height } = image.getSize()
   if (width <= 0 || height <= 0) {
     console.warn('[system-tray] macOS menu bar icon could not be loaded')
     return null
   }
 
-  const retinaImage = nativeImage.createFromPath(menuBarIconRetinaPath)
+  const retinaImage = nativeImage.createFromPath(iconPaths.retina)
   const retinaSize = retinaImage.getSize()
   if (retinaSize.width > 0 && retinaSize.height > 0) {
     try {
