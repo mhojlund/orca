@@ -26,8 +26,13 @@ export const COMPAT_SERVER_TARGET_BASES: Record<CompatServerTarget, ServerTarget
   'linux-x64-glibc217': 'linux-x64-glibc'
 }
 
-// Include every target for Windows SSH node-pty/ConPTY slots (D5), although managed orcad launch remains POSIX-only (orcad-remote-host-support.ts).
-export const ORCAD_TEMPLATE_TARGETS: readonly ServerTarget[] = SERVER_TARGETS
+// Orca RS fork: ship only the targets we can build natively; linux arm64/musl and win32-arm64 hosts report the server unavailable.
+export const ORCAD_TEMPLATE_TARGETS: readonly ServerTarget[] = [
+  'darwin-arm64',
+  'darwin-x64',
+  'linux-x64-glibc',
+  'win32-x64'
+]
 
 export type NodeRuntimePin = {
   version: string

@@ -49,6 +49,12 @@ export const MATRIX_SLOTS = [
   'win32-arm64'
 ]
 
+// A mac can cross-compile the other macOS arch; every other slot must build on its own platform and arch.
+export function slotTargetArch(slot, platform = process.platform, arch = process.arch) {
+  const match = /^darwin-(x64|arm64)$/.exec(slot)
+  return platform === 'darwin' && match ? match[1] : arch
+}
+
 // glibcVersionRuntime identifies glibc linkage; musl has no dependable ldd output.
 export function detectLibc(platform = process.platform, header = readReportHeader()) {
   if (platform !== 'linux') {
@@ -152,6 +158,7 @@ function nodePtyDir() {
 
 // Build in scratch or Node-header compilation overwrites desktop’s Electron addon.
 async function compileNodePty(sourceDir, slot) {
+  const targetArch = slotTargetArch(slot)
   const workDir = join(WORK_DIR, slot)
   const stagedDir = join(workDir, 'node-pty')
   rmSync(workDir, { recursive: true, force: true })
@@ -183,7 +190,8 @@ async function compileNodePty(sourceDir, slot) {
     stagedDir,
     workDir,
     nodeDir,
-    staticCxxRuntime: isCompatSlot(slot)
+    staticCxxRuntime: isCompatSlot(slot),
+    targetArch: targetArch === process.arch ? undefined : targetArch
   })
   if (process.platform === 'win32') {
     require('../../native-build/node-addons/node-pty-job-ownership.cjs').assertRebuiltConptyDeniesMsysBreakaway(
@@ -251,6 +259,7 @@ async function build() {
   const sourceDir = nodePtyDir()
   assertNodePtyPatchApplied(sourceDir)
   const slot = slotName()
+  const targetArch = slotTargetArch(slot)
   assertCompatSlotHost(slot, { platform: process.platform, arch: process.arch, libc: detectLibc() })
   const slotDir = join(PREBUILDS_DIR, slot)
   const { buildDir, nodeDir } = await compileNodePty(sourceDir, slot)
@@ -263,14 +272,15 @@ async function build() {
     : []
 
   buildJournalFileLock(
-    join(buildDir, process.platform === 'win32' ? 'journal-file-lock.exe' : 'journal-file-lock')
+    join(buildDir, process.platform === 'win32' ? 'journal-file-lock.exe' : 'journal-file-lock'),
+    targetArch
   )
   rmSync(slotDir, { recursive: true, force: true })
   const files = {}
   for (const [relative, source] of [
     ...slotSourceFiles({
       platform: process.platform,
-      arch: process.arch,
+      arch: targetArch,
       buildDir,
       nodePtyDir: sourceDir
     }),
@@ -305,7 +315,7 @@ async function build() {
     nodeHeaders: NODE_RUNTIME_PIN.version,
     entry: {
       platform: process.platform,
-      arch: process.arch,
+      arch: targetArch,
       libc,
       glibc,
       napi: SLOT_NAPI_VERSION,

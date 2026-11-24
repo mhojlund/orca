@@ -23,6 +23,7 @@ export async function nodeGypRebuild({
   workDir,
   nodeDir,
   staticCxxRuntime,
+  targetArch,
   runProcess
 }) {
   const compileGypi = join(workDir, 'prebuild-compile.gypi')
@@ -43,6 +44,7 @@ export async function nodeGypRebuild({
       join(ROOT, 'node_modules', 'node-gyp', 'bin', 'node-gyp.js'),
       'rebuild',
       `--nodedir=${nodeDir}`,
+      ...(targetArch ? [`--arch=${targetArch}`] : []),
       '--',
       '-I',
       compileGypi
