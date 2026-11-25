@@ -449,6 +449,7 @@ import {
   TerminalArtifactFileChunk,
   TerminalArtifactFileWrite
 } from './filesystem/files-terminal-artifact-params'
+import { GiteaInstanceConnect, GiteaInstanceDisconnect } from './gitea-params'
 import { BindableAccounts, ValidateAccountBinding } from './github/github-account-binding-params'
 import { UploadGitHubAttachment } from './github/github-attachment-params'
 import { CreateIssue, Issue, IssueComment, UpdateIssue } from './github/github-issue-params'
@@ -1686,6 +1687,20 @@ export const RPC_PARAMS_BY_METHOD = {
   'git.switchBranch': GitSwitchBranch,
   'git.unstage': GitFilePath,
   'git.upstreamStatus': GitTargetedRemote,
+  'gitea.addIssueComment': IssueComment,
+  'gitea.countWorkItems': WorkItemsCount,
+  'gitea.createIssue': CreateIssue,
+  'gitea.instances.connect': GiteaInstanceConnect,
+  'gitea.instances.disconnect': GiteaInstanceDisconnect,
+  'gitea.instances.status': null,
+  'gitea.issue': Issue,
+  'gitea.listAssignableUsers': RepoSelector,
+  'gitea.listLabels': RepoSelector,
+  'gitea.listWorkItems': WorkItemsList,
+  'gitea.updateIssue': UpdateIssue,
+  'gitea.workItem': WorkItem,
+  'gitea.workItemByOwnerRepo': WorkItemByOwnerRepo,
+  'gitea.workItemDetails': WorkItem,
   'github.addIssueComment': IssueComment,
   'github.addPRReviewComment': PRReviewComment,
   'github.addPRReviewCommentReply': PRReviewCommentReply,

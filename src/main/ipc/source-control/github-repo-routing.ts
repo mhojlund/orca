@@ -38,6 +38,8 @@ type RegisteredRepoQuery = {
   /** Picks between twins (one id on two hosts); a lone row's own fields still win (they may be stale). */
   hostHint?: Parameters<typeof getRepoExecutionHostId>[0] | null
   sourceContext?: TaskSourceContext | null
+  /** Task source provider whose context may pin the owning host. */
+  provider?: 'github' | 'gitea'
 }
 
 function validateRegisteredRepo(
@@ -45,6 +47,7 @@ function validateRegisteredRepo(
   repos: readonly Repo[]
 ): RegisteredRepoValidationResult {
   const { repoId, sourceContext } = query
+  const provider = query.provider ?? 'github'
   const resolvedRepoPath = resolve(query.repoPath)
   const idRows = repoId ? repos.filter((candidate) => candidate.id === repoId) : []
   if (repoId && idRows.length === 0) {
@@ -73,12 +76,12 @@ function validateRegisteredRepo(
   }
   const ownerHostId =
     query.repoOwnerExecutionHostId ??
-    (sourceContext?.provider === 'github' ? sourceContext.hostId : null)
+    (sourceContext?.provider === provider ? sourceContext.hostId : null)
   if (ownerHostId) {
     const repo = pathRows.find(
       (candidate) =>
         getRepoExecutionHostId(candidate) === ownerHostId &&
-        (sourceContext?.provider !== 'github' || sourceContext.hostId === ownerHostId)
+        (sourceContext?.provider !== provider || sourceContext.hostId === ownerHostId)
     )
     return repo
       ? { kind: 'ok', repo }
@@ -128,6 +131,11 @@ export function assertRegisteredGitHubRepo(
   store: Store
 ): Repo {
   return assertRegisteredRepo(registeredRepoQuery(args), store)
+}
+
+/** Gitea task sources reuse GitHub's repo validation with their own source-context provider. */
+export function assertRegisteredGiteaRepo(args: string | GitHubRepoScopedArgs, store: Store): Repo {
+  return assertRegisteredRepo({ ...registeredRepoQuery(args), provider: 'gitea' }, store)
 }
 
 export function assertRegisteredPRRefreshCandidateRepo(
