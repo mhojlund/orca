@@ -31,6 +31,8 @@ export function applyWorktreeNavViewEntry(entry: WorktreeNavHistoryViewEntry): v
         openGitHubInitialTab: undefined,
         openGitLabWorkItem: undefined,
         openGitLabSourceContext: undefined,
+        openGiteaWorkItem: undefined,
+        openGiteaSourceContext: undefined,
         openLinearIssue: undefined,
         openLinearSourceContext: undefined,
         openJiraIssue: undefined,
@@ -51,6 +53,8 @@ export function applyWorktreeNavViewEntry(entry: WorktreeNavHistoryViewEntry): v
         openGitHubInitialTab: entry.initialTab,
         openGitLabWorkItem: undefined,
         openGitLabSourceContext: undefined,
+        openGiteaWorkItem: undefined,
+        openGiteaSourceContext: undefined,
         openLinearIssue: undefined,
         openLinearSourceContext: undefined,
         openJiraIssue: undefined,
@@ -80,6 +84,29 @@ export function applyWorktreeNavViewEntry(entry: WorktreeNavHistoryViewEntry): v
     }))
     return
   }
+  if (entry.source === 'gitea') {
+    useAppStore.setState((state) => ({
+      activeView: 'tasks',
+      githubTaskDrawerWorkItem: null,
+      taskPageData: {
+        ...state.taskPageData,
+        taskSource: 'gitea',
+        preselectedRepoId: entry.workItem.repoId,
+        openGitHubWorkItem: undefined,
+        openGitHubSourceContext: undefined,
+        openGitHubInitialTab: undefined,
+        openGitLabWorkItem: undefined,
+        openGitLabSourceContext: undefined,
+        openGiteaWorkItem: entry.workItem,
+        openGiteaSourceContext: entry.sourceContext,
+        openLinearIssue: undefined,
+        openLinearSourceContext: undefined,
+        openJiraIssue: undefined,
+        openJiraSourceContext: undefined
+      }
+    }))
+    return
+  }
   if (entry.source === 'jira') {
     useAppStore.setState((state) => ({
       activeView: 'tasks',
@@ -92,6 +119,8 @@ export function applyWorktreeNavViewEntry(entry: WorktreeNavHistoryViewEntry): v
         openGitHubInitialTab: undefined,
         openGitLabWorkItem: undefined,
         openGitLabSourceContext: undefined,
+        openGiteaWorkItem: undefined,
+        openGiteaSourceContext: undefined,
         openLinearIssue: undefined,
         openLinearSourceContext: undefined,
         openJiraIssue: entry.issue,
@@ -111,6 +140,8 @@ export function applyWorktreeNavViewEntry(entry: WorktreeNavHistoryViewEntry): v
       openGitHubInitialTab: undefined,
       openGitLabWorkItem: undefined,
       openGitLabSourceContext: undefined,
+      openGiteaWorkItem: undefined,
+      openGiteaSourceContext: undefined,
       openLinearIssue: entry.issue,
       openLinearSourceContext: entry.sourceContext,
       openJiraIssue: undefined,

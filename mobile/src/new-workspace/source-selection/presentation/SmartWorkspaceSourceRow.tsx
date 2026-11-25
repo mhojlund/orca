@@ -54,6 +54,20 @@ function resolveRowContent(row: SourceRow, t: Translate): RowContent {
               }),
         status: row.item.state
       }
+    case 'gitea':
+      return {
+        icon: <TaskProviderLogo provider="gitea" size={18} color={colors.textSecondary} />,
+        title: row.item.title,
+        subtitle:
+          row.item.type === 'pr'
+            ? t('components.smartWorkspaceSourceRow.pullRequest', 'PR #{{number}}', {
+                number: row.item.number
+              })
+            : t('components.smartWorkspaceSourceRow.issue', 'Issue #{{number}}', {
+                number: row.item.number
+              }),
+        status: row.item.state
+      }
     case 'gitlab':
       return {
         icon: <TaskProviderLogo provider="gitlab" size={18} color={colors.textSecondary} />,

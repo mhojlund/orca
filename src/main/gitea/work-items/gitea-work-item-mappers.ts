@@ -42,6 +42,7 @@ export type RawGiteaPullDetail = {
   merged?: boolean | null
   draft?: boolean | null
   mergeable?: boolean | null
+  requested_reviewers?: RawGiteaUser[] | null
   head?: {
     ref?: string | null
     sha?: string | null
@@ -114,7 +115,8 @@ function sameRepo(fullName: string | null | undefined, repo: GiteaRepoRef): bool
 export function mapGiteaWorkItem(
   raw: RawGiteaIssue,
   repo: GiteaRepoRef,
-  pull?: RawGiteaPullDetail | null
+  pull?: RawGiteaPullDetail | null,
+  signals?: Partial<MainGiteaWorkItem> | null
 ): MainGiteaWorkItem | null {
   const number = raw.number
   if (typeof number !== 'number' || !Number.isInteger(number) || number < 1) {
@@ -154,7 +156,8 @@ export function mapGiteaWorkItem(
                 ? 'CONFLICTING'
                 : 'UNKNOWN'
         }
-      : {})
+      : {}),
+    ...signals
   }
 }
 

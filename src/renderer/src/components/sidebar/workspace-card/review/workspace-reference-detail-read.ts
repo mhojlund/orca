@@ -149,12 +149,14 @@ export function getWorkspaceReferenceLookup(request: WorkspaceReferenceRequest, 
     )
   }
   if (
-    item.provider === 'github' &&
+    (item.provider === 'github' || item.provider === 'gitea') &&
     repo &&
-    sourceContext.provider === 'github' &&
+    sourceContext.provider === item.provider &&
     isWorkspaceRepositoryAttachment(item, repo)
   ) {
-    const ownerRepo = getGitHubIssueUrlRepository(item.url, item.number)
+    // Why: owner/repo URL routing is GitHub-only; Gitea issues resolve through the repo remote.
+    const ownerRepo =
+      item.provider === 'github' ? getGitHubIssueUrlRepository(item.url, item.number) : undefined
     const cacheKey = `${scope}::${repo.id}::${issueCacheSuffix(item.number, ownerRepo)}`
     return lookup(
       state,

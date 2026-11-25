@@ -124,11 +124,17 @@ export function openCmdJTask(result: CmdJTaskSearchResult, createWorkspace = fal
               openGitHubWorkItem: task.issue,
               openGitHubSourceContext: result.sourceContext
             }
-          : {
-              ...common,
-              openGitLabWorkItem: task.issue,
-              openGitLabSourceContext: result.sourceContext
-            },
+          : task.provider === 'gitea'
+            ? {
+                ...common,
+                openGiteaWorkItem: task.issue,
+                openGiteaSourceContext: result.sourceContext
+              }
+            : {
+                ...common,
+                openGitLabWorkItem: task.issue,
+                openGitLabSourceContext: result.sourceContext
+              },
     { recordTasksInteraction: false }
   )
 }

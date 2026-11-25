@@ -1,5 +1,5 @@
 import React from 'react'
-import { EyeOff, Github, Gitlab, List } from 'lucide-react'
+import { EyeOff, GitBranch, Github, Gitlab, List } from 'lucide-react'
 import { JiraIcon } from '@/components/icons/JiraIcon'
 import { LinearIcon } from '@/components/icons/LinearIcon'
 import {
@@ -199,6 +199,14 @@ export function SidebarTaskNavButton(): React.JSX.Element | null {
                 onOpen={() => openTaskPage({ taskSource: 'gitlab' })}
               >
                 <Gitlab className="size-3.5" aria-hidden />
+              </TaskProviderShortcut>
+            ) : null}
+            {visibleTaskProviders.includes('gitea') ? (
+              <TaskProviderShortcut
+                label={t('auto.components.sidebar.SidebarNav.openGiteaTasks', 'Open Gitea tasks')}
+                onOpen={() => openTaskPage({ taskSource: 'gitea' })}
+              >
+                <GitBranch className="size-3.5" aria-hidden />
               </TaskProviderShortcut>
             ) : null}
             {visibleTaskProviders.includes('linear') ? (

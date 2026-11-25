@@ -3,6 +3,7 @@ import { TaskPageGitHubFilters } from './github/listing/Filters'
 import { TaskPageLinearFilters } from './linear/Filters'
 import { TaskPageJiraFilters } from './jira/Filters'
 import { TaskPageGitLabFilters } from './gitlab/Filters'
+import { TaskPageGiteaFilters } from './gitea/Filters'
 export function TaskPageProviderFilters({
   model
 }: {
@@ -16,6 +17,8 @@ export function TaskPageProviderFilters({
     <TaskPageLinearFilters model={model} />
   ) : taskSource === 'jira' && jiraConnected ? (
     <TaskPageJiraFilters model={model} />
+  ) : taskSource === 'gitea' ? (
+    <TaskPageGiteaFilters model={model} />
   ) : taskSource === 'gitlab' ? (
     <TaskPageGitLabFilters model={model} />
   ) : null

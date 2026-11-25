@@ -15,6 +15,7 @@ type SmartWorkspaceUrlSourceMode =
   | 'smart'
   | 'github'
   | 'gitlab'
+  | 'gitea'
   | 'branches'
   | 'linear'
   | 'jira'

@@ -51,6 +51,9 @@ export function createUiTaskActions(set: UISliceSet, get: UISliceGet): Partial<U
       if (data.openGitLabWorkItem) {
         get().recordFeatureInteraction?.('gitlab-tasks')
       }
+      if (data.openGiteaWorkItem) {
+        get().recordFeatureInteraction?.('gitea-tasks')
+      }
       if (data.openLinearIssue) {
         get().recordFeatureInteraction?.('linear-tasks')
       }
@@ -73,21 +76,28 @@ export function createUiTaskActions(set: UISliceSet, get: UISliceGet): Partial<U
               workItem: data.openGitLabWorkItem,
               sourceContext: data.openGitLabSourceContext
             } as const)
-          : data.openLinearIssue
+          : data.openGiteaWorkItem
             ? ({
                 kind: 'task-detail',
-                source: 'linear',
-                issue: data.openLinearIssue,
-                sourceContext: data.openLinearSourceContext
+                source: 'gitea',
+                workItem: data.openGiteaWorkItem,
+                sourceContext: data.openGiteaSourceContext
               } as const)
-            : data.openJiraIssue
+            : data.openLinearIssue
               ? ({
                   kind: 'task-detail',
-                  source: 'jira',
-                  issue: data.openJiraIssue,
-                  sourceContext: data.openJiraSourceContext
+                  source: 'linear',
+                  issue: data.openLinearIssue,
+                  sourceContext: data.openLinearSourceContext
                 } as const)
-              : null
+              : data.openJiraIssue
+                ? ({
+                    kind: 'task-detail',
+                    source: 'jira',
+                    issue: data.openJiraIssue,
+                    sourceContext: data.openJiraSourceContext
+                  } as const)
+                : null
       const currentEntry = get().worktreeNavHistory[get().worktreeNavHistoryIndex]
       const currentIsTaskStack =
         currentEntry === 'tasks' ||

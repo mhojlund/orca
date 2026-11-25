@@ -207,6 +207,9 @@ export function taskListParams(input: TaskListInput, repoKey: string): HostQuery
       return input.githubMode === 'items'
         ? { provider, kind: input.githubKind, query, repos: repoKey }
         : null
+    case 'gitea':
+      // Mobile has no Gitea list read; the provider is hidden from its source switch.
+      return null
     case 'gitlab':
       return { provider, view: input.gitlabView, filter: input.gitlabFilter, query, repos: repoKey }
     case 'jira':

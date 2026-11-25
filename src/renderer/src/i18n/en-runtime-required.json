@@ -2460,6 +2460,12 @@
     "startPoint": {
       "fetchFailed": "Failed to fetch {{ref}}: {{detail}}",
       "folderUnsupported": "Folder mode does not support creating worktrees.",
+      "gitea": {
+        "forkHeadUnresolved": "Could not resolve PR #{{number}} head after fetch.",
+        "prHeadBranchMissing": "PR #{{number}} has no head branch.",
+        "prNotFound": "PR #{{number}} not found.",
+        "remoteNotFound": "No Gitea or Forgejo remote found for this repository."
+      },
       "github": {
         "forkHeadUnresolved": "Could not resolve fork PR #{{number}} head after fetch.",
         "headShaEmpty": "Empty SHA resolving PR #{{number}} head.",

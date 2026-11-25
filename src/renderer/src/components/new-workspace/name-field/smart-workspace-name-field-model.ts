@@ -24,6 +24,8 @@ export type SmartWorkspaceNameFieldProps = {
   onGitHubItemSelect: (item: GitHubWorkItem) => void
   /** Optional; when omitted, GitLab paste-URL detection is silently skipped. */
   onGitLabItemSelect?: (item: GitLabWorkItem) => void
+  /** Optional; when omitted, the Gitea tab is hidden. */
+  onGiteaItemSelect?: (item: GitHubWorkItem) => void
   onBranchSelect: (refName: string, localBranchName: string) => void
   onLinearIssueSelect: (issue: LinearIssue) => void
   onJiraIssueSelect?: (issue: JiraIssue, sourceContext: TaskSourceContext) => void
@@ -48,7 +50,15 @@ export type SmartWorkspaceNameFieldProps = {
 }
 
 export type SmartWorkspaceNameSelection = {
-  kind: 'github-pr' | 'github-issue' | 'gitlab-mr' | 'gitlab-issue' | 'branch' | 'linear' | 'jira'
+  kind:
+    | 'github-pr'
+    | 'github-issue'
+    | 'gitlab-mr'
+    | 'gitlab-issue'
+    | 'gitea-issue'
+    | 'branch'
+    | 'linear'
+    | 'jira'
   label: string
   url?: string
 }
@@ -61,6 +71,7 @@ export type RepoBackedSearchTarget = {
   repo: RepoOption
   githubSourceContext: TaskSourceContext | null
   gitlabSourceContext: TaskSourceContext | null
+  giteaSourceContext: TaskSourceContext | null
 }
 
 export type CrossRepoPrompt = {
@@ -106,6 +117,7 @@ export type WorkItemSourceSearchProps = Pick<
 > & {
   sourceSelected?: boolean
   gitlabEnabled?: boolean
+  giteaEnabled?: boolean
   typedTextEnabled?: boolean
   defaultLinearWorkspaceId?: string
 }

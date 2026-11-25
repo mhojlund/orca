@@ -11,6 +11,7 @@ import type {
   GitLabTodo
 } from '../../../../shared/gitlab/gitlab-types'
 import { getRepoBackedTaskEmptyState } from './task-page-empty-state'
+import { useTaskPageGiteaState, type TaskPageGiteaState } from './gitea/use-task-page-gitea-state'
 import { isGitLabIssueFilter, isGitLabMRFilter } from './task-page-source-context'
 export function useTaskPageProviderState(model: TaskPageSourceAvailabilityModel) {
   const {
@@ -105,47 +106,49 @@ export function useTaskPageProviderState(model: TaskPageSourceAvailabilityModel)
     }
     return gitlabItems
   }, [gitlabItems, gitlabView])
+  const giteaState = useTaskPageGiteaState()
   // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: every added field is assigned below before the model is returned.
-  const nextModel = model as typeof model & {
-    taskSourceManuallyChangedRef: typeof taskSourceManuallyChangedRef
-    lastPageTaskSourceRef: typeof lastPageTaskSourceRef
-    taskResumeAppliedRef: typeof taskResumeAppliedRef
-    githubSearchPersistReadyRef: typeof githubSearchPersistReadyRef
-    linearSearchPersistReadyRef: typeof linearSearchPersistReadyRef
-    linearViewPersistReadyRef: typeof linearViewPersistReadyRef
-    jiraSearchPersistReadyRef: typeof jiraSearchPersistReadyRef
-    taskResumeApplied: typeof taskResumeApplied
-    setTaskResumeApplied: typeof setTaskResumeApplied
-    projectModeVisible: typeof projectModeVisible
-    githubMode: typeof githubMode
-    setGithubMode: typeof setGithubMode
-    gitlabFilter: typeof gitlabFilter
-    setGitlabFilter: typeof setGitlabFilter
-    gitlabMRInvolvement: typeof gitlabMRInvolvement
-    setGitlabMRInvolvement: typeof setGitlabMRInvolvement
-    gitlabItems: typeof gitlabItems
-    setGitlabItems: typeof setGitlabItems
-    gitlabListQueryKey: typeof gitlabListQueryKey
-    setGitlabListQueryKey: typeof setGitlabListQueryKey
-    gitlabLoading: typeof gitlabLoading
-    setGitlabLoading: typeof setGitlabLoading
-    gitlabError: typeof gitlabError
-    setGitlabError: typeof setGitlabError
-    gitlabRefreshNonce: typeof gitlabRefreshNonce
-    setGitlabRefreshNonce: typeof setGitlabRefreshNonce
-    gitlabDialogItem: typeof gitlabDialogItem
-    setGitlabDialogItem: typeof setGitlabDialogItem
-    gitlabView: typeof gitlabView
-    setGitlabView: typeof setGitlabView
-    gitlabTodos: typeof gitlabTodos
-    setGitlabTodos: typeof setGitlabTodos
-    gitlabTodosLoading: typeof gitlabTodosLoading
-    setGitlabTodosLoading: typeof setGitlabTodosLoading
-    gitlabEmptyState: typeof gitlabEmptyState
-    gitlabFilterIsValid: typeof gitlabFilterIsValid
-    activeGitlabFilter: typeof activeGitlabFilter
-    displayedGitLabItems: typeof displayedGitLabItems
-  }
+  const nextModel = model as typeof model &
+    TaskPageGiteaState & {
+      taskSourceManuallyChangedRef: typeof taskSourceManuallyChangedRef
+      lastPageTaskSourceRef: typeof lastPageTaskSourceRef
+      taskResumeAppliedRef: typeof taskResumeAppliedRef
+      githubSearchPersistReadyRef: typeof githubSearchPersistReadyRef
+      linearSearchPersistReadyRef: typeof linearSearchPersistReadyRef
+      linearViewPersistReadyRef: typeof linearViewPersistReadyRef
+      jiraSearchPersistReadyRef: typeof jiraSearchPersistReadyRef
+      taskResumeApplied: typeof taskResumeApplied
+      setTaskResumeApplied: typeof setTaskResumeApplied
+      projectModeVisible: typeof projectModeVisible
+      githubMode: typeof githubMode
+      setGithubMode: typeof setGithubMode
+      gitlabFilter: typeof gitlabFilter
+      setGitlabFilter: typeof setGitlabFilter
+      gitlabMRInvolvement: typeof gitlabMRInvolvement
+      setGitlabMRInvolvement: typeof setGitlabMRInvolvement
+      gitlabItems: typeof gitlabItems
+      setGitlabItems: typeof setGitlabItems
+      gitlabListQueryKey: typeof gitlabListQueryKey
+      setGitlabListQueryKey: typeof setGitlabListQueryKey
+      gitlabLoading: typeof gitlabLoading
+      setGitlabLoading: typeof setGitlabLoading
+      gitlabError: typeof gitlabError
+      setGitlabError: typeof setGitlabError
+      gitlabRefreshNonce: typeof gitlabRefreshNonce
+      setGitlabRefreshNonce: typeof setGitlabRefreshNonce
+      gitlabDialogItem: typeof gitlabDialogItem
+      setGitlabDialogItem: typeof setGitlabDialogItem
+      gitlabView: typeof gitlabView
+      setGitlabView: typeof setGitlabView
+      gitlabTodos: typeof gitlabTodos
+      setGitlabTodos: typeof setGitlabTodos
+      gitlabTodosLoading: typeof gitlabTodosLoading
+      setGitlabTodosLoading: typeof setGitlabTodosLoading
+      gitlabEmptyState: typeof gitlabEmptyState
+      gitlabFilterIsValid: typeof gitlabFilterIsValid
+      activeGitlabFilter: typeof activeGitlabFilter
+      displayedGitLabItems: typeof displayedGitLabItems
+    }
   nextModel.taskSourceManuallyChangedRef = taskSourceManuallyChangedRef
   nextModel.lastPageTaskSourceRef = lastPageTaskSourceRef
   nextModel.taskResumeAppliedRef = taskResumeAppliedRef
@@ -181,6 +184,7 @@ export function useTaskPageProviderState(model: TaskPageSourceAvailabilityModel)
   nextModel.gitlabTodosLoading = gitlabTodosLoading
   nextModel.setGitlabTodosLoading = setGitlabTodosLoading
   nextModel.gitlabEmptyState = gitlabEmptyState
+  Object.assign(nextModel, giteaState)
   nextModel.gitlabFilterIsValid = gitlabFilterIsValid
   nextModel.activeGitlabFilter = activeGitlabFilter
   nextModel.displayedGitLabItems = displayedGitLabItems

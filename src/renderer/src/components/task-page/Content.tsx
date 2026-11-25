@@ -7,6 +7,9 @@ import ProjectViewWrapper from '@/components/github-project/ProjectViewWrapper'
 import { TaskPageGitHubList } from './github/listing/List'
 import { TaskPageGitLabTodoList } from './gitlab/TodoList'
 import { TaskPageGitLabItemList } from './gitlab/ItemList'
+import { TaskPageGiteaItemList } from './gitea/ItemList'
+import { getTaskPageRepoSourceContext } from '@/lib/work-items/task-repo-source-context'
+import { getWorkItemRepo } from '@/lib/work-items/work-item-repo-row'
 import { TaskPageJiraContent } from './jira/Content'
 export function TaskPageContent({
   model
@@ -19,6 +22,10 @@ export function TaskPageContent({
     taskSource,
     githubMode,
     gitlabView,
+    giteaDialogItem,
+    setGiteaDialogItem,
+    handleUseGiteaItem,
+    repos,
     dialogInitialTab,
     dialogWorkItem,
     dialogRepoPath,
@@ -71,6 +78,22 @@ export function TaskPageContent({
   ) : taskSource === 'github' ? (
     // Join the table shell to the filter chrome without a doubled seam.
     <TaskPageGitHubList model={model} />
+  ) : taskSource === 'gitea' && giteaDialogItem ? (
+    <GitHubItemDialog
+      workItem={giteaDialogItem}
+      initialTab="conversation"
+      repoPath={getWorkItemRepo(repos, giteaDialogItem)?.path ?? null}
+      repoId={giteaDialogItem.repoId}
+      sourceContext={getTaskPageRepoSourceContext(getWorkItemRepo(repos, giteaDialogItem), 'gitea')}
+      backLabel={t('auto.components.TaskPage.backToGiteaList', 'Gitea list')}
+      onUse={(item) => {
+        setGiteaDialogItem(null)
+        handleUseGiteaItem(item)
+      }}
+      onClose={() => setGiteaDialogItem(null)}
+    />
+  ) : taskSource === 'gitea' ? (
+    <TaskPageGiteaItemList model={model} />
   ) : taskSource === 'gitlab' && gitlabView === 'todos' ? (
     <TaskPageGitLabTodoList model={model} />
   ) : taskSource === 'gitlab' ? (
