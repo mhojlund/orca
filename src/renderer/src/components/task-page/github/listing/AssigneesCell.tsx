@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import type { GitHubWorkItem } from '../../../../../../shared/github/work-items/work-item-types'
 import type { GitHubAssignableUser } from '../../../../../../shared/github/pull-requests/pull-request-types'
 import type { Repo } from '../../../../../../shared/repository/repo-types'
@@ -124,7 +129,7 @@ export function GHAssigneesCell({
                       error?: string
                     }>(
                       target,
-                      'github.updateIssue',
+                      workItemRpcMethod(workItemForgeProviderFor(sourceContext), 'updateIssue'),
                       {
                         repo: runtimeRepoId,
                         number: item.number,
@@ -134,7 +139,7 @@ export function GHAssigneesCell({
                         timeoutMs: 30_000
                       }
                     )
-                  : await window.api.gh.updateIssue({
+                  : await workItemForgeIpc(workItemForgeProviderFor(sourceContext)).updateIssue({
                       repoPath: repo.path,
                       repoId: repo.id,
                       sourceContext,

@@ -243,24 +243,34 @@ export function patchCachedWorkItemBody(
 }
 
 // Share event listeners across dialogs and unsubscribe on HMR to avoid accumulating subscriptions.
-let workItemMutatedUnsub: (() => void) | undefined
+const workItemMutatedUnsubs: (() => void)[] = []
 let workItemDetailsCacheEventUnsub: (() => void) | undefined
-if (typeof window !== 'undefined' && window.api?.gh?.onWorkItemMutated) {
-  workItemMutatedUnsub = window.api.gh.onWorkItemMutated((payload) => {
+if (typeof window !== 'undefined') {
+  const invalidateMutated = (payload: {
+    repoPath: string
+    repoId?: string
+    type: 'issue' | 'pr'
+    number: number
+  }): void =>
     invalidateWorkItemDetailsCacheByMatch({
       repoPath: payload.repoPath,
       repoId: payload.repoId,
       type: payload.type,
       number: payload.number
     })
-  })
+  for (const provider of ['github', 'gitea'] as const) {
+    const unsubscribe = window.api?.[provider]?.onWorkItemMutated?.(invalidateMutated)
+    if (unsubscribe) {
+      workItemMutatedUnsubs.push(unsubscribe)
+    }
+  }
   workItemDetailsCacheEventUnsub = onGitHubWorkItemDetailsCacheMutation((payload) => {
     invalidateWorkItemDetailsCacheByMatch(payload)
   })
 }
 if (import.meta !== undefined && import.meta.hot) {
   import.meta.hot.dispose(() => {
-    workItemMutatedUnsub?.()
+    workItemMutatedUnsubs.forEach((unsubscribe) => unsubscribe())
     workItemDetailsCacheEventUnsub?.()
   })
 }

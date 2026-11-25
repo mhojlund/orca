@@ -1,3 +1,8 @@
+import {
+  workItemForgeIpc,
+  workItemForgeProviderFor,
+  workItemRpcMethod
+} from '@/runtime/work-item-forge/work-item-forge-api'
 import type { TaskPageWorkspaceActionsModel } from '../../use-task-page-workspace-actions'
 import { useCallback } from 'react'
 import { callRuntimeRpc } from '@/runtime/rpc/calls/runtime-rpc-call'
@@ -75,10 +80,11 @@ export function useTaskPageGitHubIssueCreation<Model extends TaskPageGitHubIssue
         toast.error(translate('auto.components.TaskPage.7437e340b4', 'Failed to create issue.'))
         return
       }
+      const forgeProvider = workItemForgeProviderFor(newIssueSourceContext)
       const result = newIssueRuntimeTarget
         ? await callRuntimeRpc<Awaited<ReturnType<typeof window.api.gh.createIssue>>>(
             newIssueRuntimeTarget,
-            'github.createIssue',
+            workItemRpcMethod(forgeProvider, 'createIssue'),
             {
               repo:
                 newIssueSourceContext?.provider === 'github'
@@ -94,7 +100,7 @@ export function useTaskPageGitHubIssueCreation<Model extends TaskPageGitHubIssue
               timeoutMs: 65_000
             }
           )
-        : await window.api.gh.createIssue({
+        : await workItemForgeIpc(forgeProvider).createIssue({
             repoPath: newIssueTargetRepo.path,
             repoId: newIssueTargetRepo.id,
             sourceContext: newIssueSourceContext,
@@ -169,7 +175,7 @@ export function useTaskPageGitHubIssueCreation<Model extends TaskPageGitHubIssue
       const fullIssuePromise = newIssueRuntimeTarget
         ? callRuntimeRpc<Awaited<ReturnType<typeof window.api.gh.workItem>>>(
             newIssueRuntimeTarget,
-            'github.workItem',
+            workItemRpcMethod(forgeProvider, 'workItem'),
             {
               repo:
                 newIssueSourceContext?.provider === 'github'
@@ -182,7 +188,7 @@ export function useTaskPageGitHubIssueCreation<Model extends TaskPageGitHubIssue
               timeoutMs: 30_000
             }
           )
-        : window.api.gh.workItem({
+        : workItemForgeIpc(forgeProvider).workItem({
             repoPath: newIssueTargetRepo.path,
             repoId: newIssueTargetRepo.id,
             sourceContext: newIssueSourceContext,
