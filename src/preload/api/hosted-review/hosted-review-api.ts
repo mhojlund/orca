@@ -4,6 +4,11 @@ import type {
   BitbucketConnectionStatus
 } from '../../../shared/bitbucket/bitbucket-credentials'
 import type {
+  GiteaConnectArgs,
+  GiteaConnectResult,
+  GiteaConnectionStatus
+} from '../../../shared/gitea/gitea-instance-types'
+import type {
   CreateHostedReviewArgs,
   CreateHostedReviewResult,
   CreateStackedHostedReviewArgs,
@@ -27,6 +32,14 @@ export type HostedReviewApi = {
   ) => Promise<HostedReviewCreationEligibility>
   create: (args: CreateHostedReviewArgs) => Promise<CreateHostedReviewResult>
   createStacked: (args: CreateStackedHostedReviewArgs) => Promise<CreateStackedHostedReviewResult>
+}
+
+export type GiteaApi = {
+  instances: {
+    connect: (args: GiteaConnectArgs) => Promise<GiteaConnectResult>
+    disconnect: (instanceId: string) => Promise<void>
+    status: () => Promise<GiteaConnectionStatus>
+  }
 }
 
 export type BitbucketApi = {
